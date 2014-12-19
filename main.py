@@ -6,7 +6,6 @@ from qframer.qt.QtGui import *
 from qframer import FSplashScreen
 
 from gui import MainWindow
-from gui import SplashScreen
 from gui.uiconfig import windowsoptions
 
 
