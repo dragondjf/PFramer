@@ -31,7 +31,7 @@ import sys
 from logging.handlers import RotatingFileHandler
 from logging import RootLogger
 import traceback
-from settings import domain, __version__, isPublished
+from settings import __version__, isPublished
 
 
 class ALERootLogger(RootLogger):

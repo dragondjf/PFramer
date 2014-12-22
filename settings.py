@@ -28,7 +28,6 @@
 
 __version__ = '2.6'
 
-domain = "http://106.185.47.124:8888"
 
 def _get_publish():
     fd = open("config/settings.json", "r")
