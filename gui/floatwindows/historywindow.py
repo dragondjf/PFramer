@@ -61,11 +61,11 @@ class HistoryWindow(QTableWidget):
         self.setColumnWidth(3, 470)
 
         self.column3_x = 0
-        for i in xrange(3):
+        for i in range(3):
             self.column3_x +=  self.columnWidth(i)
 
     def clearAllRows(self):
-        for i in xrange(self.rowCount()):
+        for i in range(self.rowCount()):
             self.removeRow(0)
 
     def resizeEvent(self, event):

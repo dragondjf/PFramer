@@ -19,6 +19,6 @@ all:
 	@echo "noop for debbuild", $(USES_PYSIDE)
 
 rcc:
-	$(RCC) ./gui/skin/icon.qrc -o ./gui/resources/qrc_icons.py
+	$(RCC) ./gui/skin/icon.qrc -o ./gui/resources/qrc_icons_py27.py
 
 .PHONY: all

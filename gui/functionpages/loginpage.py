@@ -27,7 +27,7 @@ class LoginPage(FAnimationFrame):
 
     def initSetData(self):
         initData = login_DB.loginDict
-        print initData, "----"
+        print(initData, "----")
 
     def initUI(self):
         # --------------appname----appid----------------

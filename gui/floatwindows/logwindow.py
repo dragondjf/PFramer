@@ -67,18 +67,18 @@ class LogWindow(QTableWidget):
         t = {u'function': u'RegisterAppInterface', u'type': u'request', u'correlation_id': 65529, u'data': {u'vrSynonyms': [u'djf']}}
         t = {"function" : "Speak","data" : {"ttsChunks" : [{"text" : "huan1ying2使用百度地图 , 请在手机端打开百度地图","type" : "TEXT",'a':[1,2,3,4]}]},"correlation_id" : 6,"type" : "request"}
 
-        for i in xrange(20):
+        for i in range(20):
             self.addLog(t)
 
         self.column3_x = 0
-        for i in xrange(3):
+        for i in range(3):
             self.column3_x +=  self.columnWidth(i)
 
         # self.installEventFilter(self)
         self.horizontalHeader().setEnabled(False)
 
     def clearAllRows(self):
-        for i in xrange(self.rowCount()):
+        for i in range(self.rowCount()):
             self.removeRow(0)
 
     # add log for request/reponse/notification message
@@ -110,7 +110,7 @@ class LogWindow(QTableWidget):
         request = json.loads(message[3])
         message[3] = json.dumps(request, ensure_ascii=False)
         self.insertRow(0)
-        for col in xrange(self.columnCount()):
+        for col in range(self.columnCount()):
             if col == 0:
                 if message[col] == 'None':
                     message[col] = ""
@@ -183,7 +183,7 @@ class TableItemDetailWidget(QFrame):
         self.parent = parent
         self.startX = 0
         self.row = row
-        for i in xrange(column):
+        for i in range(column):
             self.startX += self.parent.columnWidth(i)
 
         self.setObjectName("TableItemDetailWidget")

@@ -38,7 +38,7 @@ class RPCEditPage(QFrame):
         self.setLayout(mainLayout)
 
         self.rpcWidgets = {}
-        for i in xrange(100):
+        for i in range(100):
             name  = "RPC_%d" % i
             self.rpcListWidget.addItem(name)
             self.rpcWidgets.update({name: BaseRPCEditFrame})

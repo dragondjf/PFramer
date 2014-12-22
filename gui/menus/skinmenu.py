@@ -11,7 +11,7 @@ from qframer import FMenu
 
 class SkinMenu(FMenu):
 
-    skinIDSin = Signal(unicode)
+    skinIDSin = Signal(str)
 
     def __init__(self, parent=None):
         super(SkinMenu, self).__init__(parent)
