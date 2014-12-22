@@ -38,16 +38,11 @@ Command Line Run:
     
 """
 
-#import ez_setup
-#ez_setup.use_setuptools()
-
 import sys
 from setuptools import setup
-# from util import publish_set
 import shutil
 
 main = 'main.py'
-#inc = ["sip", "PySide.QtCore","PySide.QtGui"]
 inc = []
 res = 'gui/skin'
 
@@ -63,19 +58,12 @@ extra_options = dict(
                                               includes=inc,
                                               resources=res,
                                               excludes=exc,
-                                              iconfile='gui/skin/icon.icns'
+                                              iconfile='gui/skin/images/AppClient.icns'
                                               ))
                      )
 
 setup(  
-  name="ALE",
+  name="AppClient",
   **extra_options
   )
 
-# # shutil.copytree("config", "dist/ALE.app/Contents/Resources/config")
-
-# import email
-# emailpath = email.__path__[0]
-# shutil.copytree(emailpath, "dist/ALE.app/Contents/Resources/lib/python2.7/email")
-
-# publish_set()

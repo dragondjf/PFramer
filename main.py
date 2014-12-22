@@ -1,12 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import os
+os.environ['QT_API'] = 'PySide'
 
 from qframer.qt.QtCore import *
 from qframer.qt.QtGui import *
 from qframer import FSplashScreen
 
 from gui import MainWindow
-from gui import SplashScreen
 from gui.uiconfig import windowsoptions
 
 
