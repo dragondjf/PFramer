@@ -23,4 +23,4 @@ class Application(object):
     def plugins(self):
         return self._plugins
 
-plugins = Application('app1').plugins
+rpcApp = Application('app1')

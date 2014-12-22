@@ -22,10 +22,10 @@ class GuiManger(QObject):
         self.createControllers()
         views['MainWindow'].titleBar().closed.connect(self.actionExit)
 
-        from .rpcapplication import plugins
+        from .rpcapplication import rpcApp
 
-        for key, p in plugins.items():
-            print key, dir(p)
+        for key, p in rpcApp.plugins.items():
+            print key, p.__dict__
 
     def menuActionConnect(self):
         if hasattr(views['MainWindow'].menuBar(), 'qactions'):

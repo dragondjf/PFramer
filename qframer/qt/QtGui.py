@@ -14,6 +14,7 @@ from . import PYSIDE_API
 
 if os.environ[QT_API] == PYQT5_API:
     from PyQt5.QtGui import *
+    from PyQt5.QtWidgets import *
 elif os.environ[QT_API] == PYQT4_API:
     from PyQt4.QtGui import *
 elif os.environ[QT_API] == PYSIDE_API:

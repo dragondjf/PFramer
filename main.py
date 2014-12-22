@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import os
-os.environ['QT_API'] = 'PySide'
+os.environ['QT_API'] = 'PyQt5'
 
 from qframer.qt.QtCore import *
 from qframer.qt.QtGui import *
