@@ -58,7 +58,6 @@ class MainWindow(FMainWindow):
             self.titleBar().setObjectName("FTitleBar")
             self.titleBar().titleLabel.setObjectName("TitleLabel")
             self.titleBar().closeButton.setObjectName("close")
-            self.titleBar().skinButton.hide()
             self.settingsMenu = SettingsMenu(self)
             self.titleBar().settingDownButton.setMenu(self.settingsMenu)
             self.skinMenu = SkinMenu(self)

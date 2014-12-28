@@ -15,7 +15,7 @@ from .ftitlebar import FTitleBar
 from .fmenubar import FMenuBar
 from .fstatusbar import FStatusBar
 from .fcentralwidget import FCentralWidget
-from .util import setSkinForApp
+from .futil import setSkinForApp
 
 
 class FMainWindow(QMainWindow):

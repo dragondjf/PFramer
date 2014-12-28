@@ -11,7 +11,7 @@ except ImportError:
     from PySide.QtGui import *
 
 from .resources import *
-from .util import collectView, views
+from .futil import collectView, views
 
 
 baseHeight = 25
