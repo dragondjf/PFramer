@@ -1,5 +1,5 @@
 """
-Provides QtWebKit classes and functions.
+Provides QtWebKitWidgets classes and functions.
 """
 import os
 from . import QT_API
