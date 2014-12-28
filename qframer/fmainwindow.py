@@ -5,8 +5,8 @@ import os
 import json
 
 try:
-    from qt.QtCore import *
-    from qt.QtGui import *
+    from .qt.QtCore import *
+    from .qt.QtGui import *
 except ImportError:
     from PySide.QtCore import *
     from PySide.QtGui import *

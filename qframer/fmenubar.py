@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 try:
-    from qt.QtCore import *
-    from qt.QtGui import *
+    from .qt.QtCore import *
+    from .qt.QtGui import *
 except ImportError:
     from PySide.QtCore import *
     from PySide.QtGui import *
