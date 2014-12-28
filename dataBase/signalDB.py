@@ -25,12 +25,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #=============================================================================
 
-from PySide import QtCore
+from qframer.qt.QtCore import *
 
 
-class SignalDB(QtCore.QObject):
+class SignalDB(QObject):
 
-    su_logsin = QtCore.Signal(dict)
+    su_logsin = Signal(dict)
 
     def __init__(self):
         super(SignalDB, self).__init__()
