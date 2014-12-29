@@ -1,8 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import os
-# os.environ['QT_API'] = 'PySide'
-
+import sys
 from qframer.qt.QtCore import *
 from qframer.qt.QtGui import *
 from qframer import FSplashScreen
@@ -10,6 +9,7 @@ from qframer import FSplashScreen
 from gui import MainWindow
 from gui.uiconfig import windowsoptions
 
+print('using %s(%s)' % (os.environ['QT_API'], __version__))
 
 if __name__ == '__main__':
     import sys

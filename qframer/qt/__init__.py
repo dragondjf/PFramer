@@ -106,6 +106,9 @@ def autodetect():
         logging.getLogger(__name__).debug('trying PyQt5')
         import PyQt5
         os.environ[QT_API] = PYQT5_API
+        from PyQt5 import QtCore
+        QtCore.QCoreApplication.setLibraryPaths([os.sep.join([sys.prefix, \
+        'Lib', 'site-packages', 'PyQt5', 'plugins'])])
         logging.getLogger(__name__).debug('imported PyQt5')
     except ImportError:
         try:

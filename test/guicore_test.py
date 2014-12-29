@@ -2,9 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
+sys.path.append(os.path.pardir)
 from qframer.qt.QtCore import *
 from qframer.qt.QtGui import *
+from qframer.qt import QtCore
 
+print('using %s(%s)' % (os.environ['QT_API'], QtCore.__version__))
 
 class MainWindow(QMainWindow):
 
