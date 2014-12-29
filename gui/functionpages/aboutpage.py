@@ -11,7 +11,8 @@ class AboutPage(FAnimationFrame):
 
     style = '''
         QFrame{
-            background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 82, 112, 255), stop:0.5 rgba(0, 211, 197, 255), stop:1 rgba(0, 82, 112, 255));
+            /*background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(0, 82, 112, 255), stop:0.5 rgba(0, 211, 197, 255), stop:1 rgba(0, 82, 112, 255));*/
+            border-image: url(gui/skin/images/bear.jpg)
         }
     '''
 

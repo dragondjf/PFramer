@@ -42,6 +42,15 @@ class FTitleBar(QFrame):
         }
     '''
 
+    logostyle = '''
+        QToolButton#logo{
+            background-color: transparent;
+        }
+        QToolButton#logo:hover{
+            background-color: transparent;
+        }
+    '''
+
     def __init__(self, parent=None):
         super(FTitleBar, self).__init__(parent)
         self.initData()
@@ -70,9 +79,10 @@ class FTitleBar(QFrame):
         self.setFixedHeight(baseHeight)
 
         self.logoButton = BaseToolButton()
+        self.logoButton.setObjectName("logo")
+        self.logoButton.setStyleSheet(self.logostyle)
 
         self.titleLabel = QLabel()
-        # self.titleLabel.setObjectName("TitleLabel")
 
         self.skinButton = BaseToolButton()
         self.skinButton.setIcon(self.clothesIcon)
@@ -97,11 +107,12 @@ class FTitleBar(QFrame):
 
         self.closeButton = BaseToolButton()
         self.closeButton.setObjectName("close")
-        self.setStyleSheet(self.closestyle)
+        self.closeButton.setStyleSheet(self.closestyle)
         self.closeButton.setIcon(self.closeIcon)
 
         mainLayout = QHBoxLayout()
         mainLayout.addWidget(self.logoButton)
+        mainLayout.addSpacing(5)
         mainLayout.addWidget(self.titleLabel)
         mainLayout.addStretch()
         mainLayout.addWidget(self.settingDownButton)

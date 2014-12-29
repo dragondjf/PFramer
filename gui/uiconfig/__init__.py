@@ -4,13 +4,13 @@ import os
 import json
 
 
-__softwarename__ = 'AppClient'
+__softwarename__ = 'PFramer'
 __author__ = ""
 __url__ = ""
 __description__ = '''
     This is a SoftwareFrame based on PySide.
 '''
-__logoico__ = os.sep.join(['gui', 'skin','images','AppClient.png'])
+__logoico__ = os.sep.join(['gui', 'skin', 'images', 'PFramer.png'])
 __version__ = '1.0.0'
 
 
@@ -25,7 +25,7 @@ mainwindow = {
 }
 
 logo_ico = __logoico__
-logo_img_url = os.sep.join(['gui', 'skin','images','AppClient.png'])
+logo_img_url = os.sep.join(['gui', 'skin', 'images', 'PFramer.png'])
 logo_title = u''
 
 from .dialogconfig import dialogsettings
