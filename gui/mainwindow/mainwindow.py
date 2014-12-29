@@ -40,7 +40,7 @@ class MainWindow(FMainWindow):
         self.setWindowTitle(mainwindow['title'])
 
         self.initTitleBar()
-        self.addCoreWidget(RPCEditPage(self))
+        self.setCentralWidget(RPCEditPage(self))
 
         self.initDockwindow()
 

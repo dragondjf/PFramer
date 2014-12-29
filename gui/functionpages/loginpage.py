@@ -7,8 +7,6 @@ from qframer.qt.QtGui import *
 from qframer import views, collectView
 from qframer.animationwidget import FAnimationFrame
 
-from dataBase import login_DB
-
 
 class LoginPage(FAnimationFrame):
 
@@ -26,8 +24,7 @@ class LoginPage(FAnimationFrame):
         self.initUI()
 
     def initSetData(self):
-        initData = login_DB.loginDict
-        print(initData, "----")
+        pass
 
     def initUI(self):
         # --------------appname----appid----------------

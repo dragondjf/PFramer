@@ -14,7 +14,6 @@ except ImportError:
 from .ftitlebar import FTitleBar
 from .fmenubar import FMenuBar
 from .fstatusbar import FStatusBar
-from .fcentralwidget import FCentralWidget
 from .futil import setSkinForApp
 
 
@@ -27,7 +26,6 @@ class FMainWindow(QMainWindow):
         self._initFlags()
         self._initWindowFlags()
         self._initMainWindow()
-        self._initCenterWindow()
 
         self._initTitleBar()
         self._initTitlebarConnect()
@@ -66,23 +64,20 @@ class FMainWindow(QMainWindow):
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-    def _initCenterWindow(self):
-        centeralwindow = FCentralWidget(self)
-        self.setCentralWidget(centeralwindow)
-
-    def addCoreWidget(self, widget):
-        if isinstance(self.centralWidget(), FCentralWidget):
-            self.centralWidget().addWidget(widget)
+    def setCentralWidget(self, widget):
+        centralWidget = QFrame(self)
+        mainlayout = QVBoxLayout()
+        mainlayout.addWidget(self.titleBar())
+        mainlayout.addWidget(widget)
+        mainlayout.setContentsMargins(0, 0, 0, 0)
+        mainlayout.setSpacing(0)
+        centralWidget.setLayout(mainlayout)
+        super(FMainWindow, self).setCentralWidget(centralWidget)
 
     def _initTitleBar(self, flag=True):
         self._customTitlebarFlag = flag
         if self._customTitlebarFlag:
             self._titleBar = FTitleBar()
-            self.centralWidget().addTitleBar(self._titleBar)
-
-    def titleBar(self):
-        if self._customTitlebarFlag:
-            return self._titleBar
 
     def _initTitlebarConnect(self):
         if self.isFtitleBarExisted():
@@ -94,9 +89,13 @@ class FMainWindow(QMainWindow):
 
     def isFtitleBarExisted(self):
         if self._customTitlebarFlag:
-            if hasattr(self, 'titleBar') and isinstance(self._titleBar, FTitleBar):
+            if isinstance(self._titleBar, FTitleBar):
                 return True
         return False
+
+    def titleBar(self):
+        if self.isFtitleBarExisted():
+            return self._titleBar
 
     def _initToolbars(self):
         pass
