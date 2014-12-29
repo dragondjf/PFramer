@@ -1,16 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
-import json
-
 from .qt.QtCore import *
 from .qt.QtGui import *
 
 from .ftitlebar import FTitleBar
-from .fmenubar import FMenuBar
 from .fstatusbar import FStatusBar
-from .futil import setSkinForApp
 
 
 class FMainWindow(QMainWindow):
@@ -25,18 +20,18 @@ class FMainWindow(QMainWindow):
 
         self._initTitleBar()
         self._initTitlebarConnect()
-        
+
         self._initToolbars()
         self._initStatusbar()
 
     def _initFlags(self):
-        self._framelessflag = True # 无系统边框标志
-        self._customTitlebarFlag = True # 自定义标题栏标志
+        self._framelessflag = True  # 无系统边框标志
+        self._customTitlebarFlag = True  # 自定义标题栏标志
         self._menubarFlag = False
         self._maximizedflag = False  # 初始化时窗口最大化标志
-        self._lockflag = False # 锁定标志
-        self._pinflag = False # 置顶标志
-        self._modeflag = False # 手机(True)或桌面模式(False)
+        self._lockflag = False  # 锁定标志
+        self._pinflag = False  # 置顶标志
+        self._modeflag = False  # 手机(True)或桌面模式(False)
 
         desktopWidth = QDesktopWidget().availableGeometry().width()
         desktopHeight = QDesktopWidget().availableGeometry().height()
@@ -47,7 +42,9 @@ class FMainWindow(QMainWindow):
     def _initWindowFlags(self, flag=True):
         framelessflag = flag
         if framelessflag:
-            self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint)  # 无边框， 带系统菜单， 可以最小化
+            # 无边框， 带系统菜单， 可以最小化
+            self.setWindowFlags(
+                Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint)
         else:
             self.setWindowFlags(Qt.CustomizeWindowHint)
         self._framelessflag = framelessflag
@@ -129,7 +126,8 @@ class FMainWindow(QMainWindow):
         if flag:
             self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
         else:
-            self.setWindowFlags(self.windowFlags() & (~Qt.WindowStaysOnTopHint))
+            self.setWindowFlags(
+                self.windowFlags() & (~Qt.WindowStaysOnTopHint))
         self.show()
 
     def setLocked(self, flag):
@@ -157,7 +155,7 @@ class FMainWindow(QMainWindow):
 
     def showNormal(self):
         self.resize(self.default_size)
-        self.move(self.oldPosition)        
+        self.move(self.oldPosition)
 
     def isMaximized(self):
         return self._maximizedflag

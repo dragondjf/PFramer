@@ -8,6 +8,7 @@ from .qt.QtGui import *
 
 views = {}
 
+
 def collectView(func):
 
     @functools.wraps(func)
@@ -18,6 +19,7 @@ def collectView(func):
         func(*args, **kwargs)
     return wrapper
 
+
 def setSkinForApp(qssfile):
     if os.path.exists(qssfile):
         fd = open(qssfile, "r")
@@ -25,4 +27,4 @@ def setSkinForApp(qssfile):
         fd.close()
         QApplication.instance().setStyleSheet(style)
     else:
-    	QApplication.instance().setStyleSheet("")
+        QApplication.instance().setStyleSheet("")

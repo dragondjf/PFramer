@@ -1,13 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
-
 from .qt.QtCore import *
 from .qt.QtGui import *
-
 from .resources import *
-from .futil import collectView, views
 
 
 baseHeight = 25
@@ -74,7 +70,6 @@ class FTitleBar(QFrame):
         self.setFixedHeight(baseHeight)
 
         self.logoButton = BaseToolButton()
-        
 
         self.titleLabel = QLabel()
         # self.titleLabel.setObjectName("TitleLabel")

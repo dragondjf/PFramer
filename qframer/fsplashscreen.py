@@ -1,12 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
-
+import time
 from .qt.QtCore import *
 from .qt.QtGui import *
 
-import time
 
 class FSplashScreen(QSplashScreen):
 

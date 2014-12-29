@@ -27,9 +27,11 @@ class FStatusBar(QStatusBar):
 
     def initUI(self):
         self.datatimelabel = QLabel(self)
-        self.datatimelabel.setText(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+        self.datatimelabel.setText(
+            datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
         self.datatimelabel.show()
         self.addPermanentWidget(self.datatimelabel)
 
     def timerEvent(self, event):
-        self.datatimelabel.setText(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+        self.datatimelabel.setText(
+            datetime.today().strftime("%Y-%m-%d %H:%M:%S"))

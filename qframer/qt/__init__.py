@@ -68,6 +68,7 @@ PYSIDE_API = 'pyside'
 
 
 class PythonQtError(Exception):
+
     """
     Error raise if no bindings could be selected
     """
@@ -107,8 +108,8 @@ def autodetect():
         import PyQt5
         os.environ[QT_API] = PYQT5_API
         from PyQt5 import QtCore
-        QtCore.QCoreApplication.setLibraryPaths([os.sep.join([sys.prefix, \
-        'Lib', 'site-packages', 'PyQt5', 'plugins'])])
+        QtCore.QCoreApplication.setLibraryPaths([os.sep.join([sys.prefix,
+                                                              'Lib', 'site-packages', 'PyQt5', 'plugins'])])
         logging.getLogger(__name__).debug('imported PyQt5')
     except ImportError:
         try:

@@ -1,13 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
-
 from .qt.QtCore import *
 from .qt.QtGui import *
 
 
 class FMenu(QMenu):
+
     '''
         self.menuItems 定义menu
         self.actions QAction集合
