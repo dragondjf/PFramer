@@ -2,12 +2,9 @@
 # -*- coding: utf-8 -*-
 import os
 import functools
-try:
-    from .qt.QtCore import *
-    from .qt.QtGui import *
-except ImportError:
-    from PySide.QtCore import *
-    from PySide.QtGui import *
+
+from .qt.QtCore import *
+from .qt.QtGui import *
 
 views = {}
 

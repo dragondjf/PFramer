@@ -1,15 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-try:
-    from .qt.QtCore import *
-    from .qt.QtGui import *
-    from .qt.QtWebKit import *
-    from .qt.QtNetwork import *
-except ImportError:
-    from PySide.QtCore import *
-    from PySide.QtGui import *
-    from PySide.QtWebKit import *
-    from PySide.QtNetwork import *
+
+from .qt.QtCore import *
+from .qt.QtGui import *
+from .qt.QtWebKit import *
+from .qt.QtNetwork import *
 
 
 class FWebkitBasePage(QFrame):

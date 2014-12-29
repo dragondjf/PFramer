@@ -3,12 +3,8 @@
 
 import os
 
-try:
-    from .qt.QtCore import *
-    from .qt.QtGui import *
-except ImportError:
-    from PySide.QtCore import *
-    from PySide.QtGui import *
+from .qt.QtCore import *
+from .qt.QtGui import *
 
 from .resources import *
 from .futil import collectView, views

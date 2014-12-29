@@ -1,13 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-try:
-    from .qt.QtCore import *
-    from .qt.QtGui import *
-except ImportError:
-    from PySide.QtCore import *
-    from PySide.QtGui import *
-
+from .qt.QtCore import *
+from .qt.QtGui import *
 from datetime import datetime
 
 
