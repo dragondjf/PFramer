@@ -10,7 +10,7 @@ class MainWindow(QFrame):
 
     style = '''
         QFrame{
-            border-image: url(logo.png);
+            border-image: url(bear.jpg);
         }
     '''
 

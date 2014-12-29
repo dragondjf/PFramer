@@ -169,7 +169,7 @@ class FTitleBar(QFrame):
         self.maximized.emit(self.max_flag)
 
     def mouseDoubleClickEvent(self, event):
-        self.maxButton.clicked.emit()
+        self.maxButton.click()
 
     def setLogo(self, icon):
         if isinstance(icon, QIcon):
