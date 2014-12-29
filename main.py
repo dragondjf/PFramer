@@ -9,6 +9,9 @@ from qframer import FSplashScreen
 from gui import MainWindow
 from gui.uiconfig import windowsoptions
 
+from qframer.qt import QtCore
+print('using %s(%s)' % (os.environ['QT_API'], QtCore.__version__))
+
 if __name__ == '__main__':
     import sys
     app = QApplication(sys.argv)
