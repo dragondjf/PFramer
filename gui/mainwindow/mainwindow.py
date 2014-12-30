@@ -60,6 +60,7 @@ class MainWindow(FMainWindow):
             self.titleBar().closeButton.setObjectName("close")
             self.settingsMenu = SettingsMenu(self)
             self.titleBar().settingDownButton.setMenu(self.settingsMenu)
+            self.setSystemTrayMenu(self.settingsMenu)
             self.skinMenu = SkinMenu(self)
             self.skinMenu.setFixedWidth(100)
             self.titleBar().skinButton.setMenu(self.skinMenu)

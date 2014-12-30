@@ -24,6 +24,8 @@ class FMainWindow(QMainWindow):
         self._initToolbars()
         self._initStatusbar()
 
+        self._initSystemTray()
+
     def _initFlags(self):
         self._framelessflag = True  # 无系统边框标志
         self._customTitlebarFlag = True  # 自定义标题栏标志
@@ -56,6 +58,31 @@ class FMainWindow(QMainWindow):
 
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.layout().setContentsMargins(0, 0, 0, 0)
+
+    def _initSystemTray(self):
+        self.systemTrayIcon = QIcon("gui/skin/images/PFramer.ico")
+        self.systemTray = QSystemTrayIcon(self.systemTrayIcon, self)
+        self.systemTray.show()
+        self.systemTray.activated.connect(self.onSystemTrayIconClicked)
+
+    def onSystemTrayIconClicked(self, reason):
+        if reason == QSystemTrayIcon.Unknown:
+            pass
+        elif reason == QSystemTrayIcon.Context:
+            pass
+        elif reason == QSystemTrayIcon.DoubleClick:
+            pass
+        elif reason == QSystemTrayIcon.Trigger:
+            self.setVisible(not self.isVisible())
+        elif reason == QSystemTrayIcon.MiddleClick:
+            pass
+        else:
+            pass
+
+    def setSystemTrayMenu(self, menu):
+        if isinstance(menu, QMenu) and \
+                hasattr(self, 'systemTray') and self.systemTray:
+            self.systemTray.setContextMenu(menu)
 
     def setCentralWidget(self, widget):
         centralWidget = QFrame(self)
