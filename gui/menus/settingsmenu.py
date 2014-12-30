@@ -21,6 +21,12 @@ class SettingsMenu(FMenu):
                 'trigger': 'Login',
             },
             {
+                'name': self.tr('Show suspension window'),
+                'icon': u'',
+                'shortcut': u'',
+                'trigger': 'Suspension',
+            },
+            {
                 'name': self.tr('Language'),
                 'trigger': 'Language',
                 'type': 'submenu',

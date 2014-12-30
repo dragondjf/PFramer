@@ -8,11 +8,10 @@ from qframer.qt.QtCore import *
 from qframer.qt.QtGui import *
 from qframer import views, collectView
 from qframer import FMainWindow
+from qframer import FSuspensionWidget
 from qframer import setSkinForApp
 import qframer.dialogs as dialogs
 
-from .menubar import MenuBar
-from .statusbar import StatusBar
 
 from gui.uiconfig import windowsoptions
 from gui.menus import SettingsMenu, SkinMenu
@@ -39,6 +38,8 @@ class MainWindow(FMainWindow):
         self.setWindowIcon(mainwindow['icon'])
         self.setWindowTitle(mainwindow['title'])
 
+        self.initMenus()
+
         self.initTitleBar()
         self.setCentralWidget(RPCEditPage(self))
 
@@ -46,29 +47,40 @@ class MainWindow(FMainWindow):
 
         self.statusBar().datatimelabel.setObjectName("datatimelabel")
 
+        self.setSystemTrayMenu(self.settingsMenu)
+
+        self.suspensionWidget = FSuspensionWidget(
+            'gui/skin/images/PFramer.png', self)
+        self.suspensionWidget.setContextMenu(self.settingsMenu)
+
     def initSize(self):
         mainwindow = windowsoptions['mainwindow']
         desktopWidth = QDesktopWidget().availableGeometry().width()
         desktopHeight = QDesktopWidget().availableGeometry().height()
-        self.resize(desktopWidth * mainwindow['size'][0], desktopHeight * mainwindow['size'][1])
+        self.resize(
+            desktopWidth * mainwindow['size'][0],
+            desktopHeight * mainwindow['size'][1])
         self.moveCenter()
+
+    def initMenus(self):
+        self.settingsMenu = SettingsMenu(self)
+        self.skinMenu = SkinMenu(self)
+        self.skinMenu.setFixedWidth(100)
 
     def initTitleBar(self):
         if self.isFtitleBarExisted():
             self.titleBar().setObjectName("FTitleBar")
             self.titleBar().titleLabel.setObjectName("TitleLabel")
             self.titleBar().closeButton.setObjectName("close")
-            self.settingsMenu = SettingsMenu(self)
             self.titleBar().settingDownButton.setMenu(self.settingsMenu)
-            self.setSystemTrayMenu(self.settingsMenu)
-            self.skinMenu = SkinMenu(self)
-            self.skinMenu.setFixedWidth(100)
             self.titleBar().skinButton.setMenu(self.skinMenu)
             self.initTitleBarMenuConnect()
 
     def initTitleBarMenuConnect(self):
-        self.titleBar().settingMenuShowed.connect(self.titleBar().settingDownButton.showMenu)
-        self.titleBar().skinMenuShowed.connect(self.titleBar().skinButton.showMenu)
+        self.titleBar().settingMenuShowed.connect(
+            self.titleBar().settingDownButton.showMenu)
+        self.titleBar().skinMenuShowed.connect(
+            self.titleBar().skinButton.showMenu)
         self.skinMenu.skinIDSin.connect(self.setskin)
 
     def initDockwindow(self):
@@ -79,7 +91,8 @@ class MainWindow(FMainWindow):
 
         # History
         self.historywindow = HistoryWindow(self)
-        self.historyfloatwindow = FloatWindow(self.historywindow, self.tr("Histroy"), self)
+        self.historyfloatwindow = FloatWindow(
+            self.historywindow, self.tr("Histroy"), self)
         self.addDockWidget(Qt.BottomDockWidgetArea, self.historyfloatwindow)
 
         self.logfloatwindow.setFixedHeight(194)

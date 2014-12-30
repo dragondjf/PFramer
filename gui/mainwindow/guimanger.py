@@ -61,6 +61,14 @@ class GuiManger(QObject):
         self.loginPage = LoginPage(views['MainWindow'])
         self.loginPage.animationShow()
 
+    def actionSuspension(self):
+        sw = views['MainWindow'].suspensionWidget
+        sw.setVisible(not sw.isVisible())
+        if sw.isVisible():
+            self.sender().setText('Hide suspension window')
+        else:
+            self.sender().setText('Show suspension window')
+
     def actionAndroidDeveloper(self):
         logger.info("Android guide")
 
