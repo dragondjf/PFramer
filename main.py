@@ -10,6 +10,7 @@ from gui import MainWindow
 from gui.uiconfig import windowsoptions
 
 from qframer.qt import QtCore
+from objbrowser import browse
 print('using %s(%s)' % (os.environ['QT_API'], QtCore.__version__))
 
 if __name__ == '__main__':
@@ -22,4 +23,7 @@ if __name__ == '__main__':
     else:
         mainwindow = MainWindow()
         mainwindow.show()
-    sys.exit(app.exec_())
+
+    browse(mainwindow)
+    exitCode = app.exec_()
+    sys.exit(exitCode)

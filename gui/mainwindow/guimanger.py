@@ -98,4 +98,6 @@ class GuiManger(QObject):
         logger.info("actionNotImplement")
 
     def close(self):
-        views['MainWindow'].close()
+        app = QApplication.instance()
+        app.closeAllWindows()
+        app.quit()
