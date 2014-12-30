@@ -81,7 +81,7 @@ class GuiManger(QObject):
 
     def actionObjectView(self):
         from objbrowser import browse
-        browse(self)
+        browse(globals())
 
     def actionAbout(self):
         if hasattr(self, 'aboutPage'):

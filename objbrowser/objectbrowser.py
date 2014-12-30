@@ -111,6 +111,8 @@ class ObjectBrowser(FMainWindow):
 
         self.titleBar().modeButton.click()
 
+        self.toggle_callable_action.toggle()
+
 
     def initSize(self):
         desktopWidth = QtGui.QDesktopWidget().availableGeometry().width()
