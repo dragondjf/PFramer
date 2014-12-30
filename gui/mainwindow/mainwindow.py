@@ -52,6 +52,7 @@ class MainWindow(FMainWindow):
         self.suspensionWidget = FSuspensionWidget(
             'gui/skin/images/PFramer.png', self)
         self.suspensionWidget.setContextMenu(self.settingsMenu)
+        self.suspensionWidget.move(self.frameGeometry().topRight() + QPoint(20, 20))
 
     def initSize(self):
         mainwindow = windowsoptions['mainwindow']
