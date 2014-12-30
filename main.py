@@ -13,7 +13,6 @@ from qframer.qt import QtCore
 print('using %s(%s)' % (os.environ['QT_API'], QtCore.__version__))
 
 if __name__ == '__main__':
-    import sys
     app = QApplication(sys.argv)
     if windowsoptions['splashflag']:
         splash = FSplashScreen(1, windowsoptions['splashimg'])

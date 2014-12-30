@@ -44,6 +44,7 @@ from settings import __version__
 from cx_Freeze import setup, Executable
 import PySide
 
+
 def change_package_fromLib(rootpath, package_name):
     '''
         根据包名从python Lib中获取到包，替换library.zip中名字相同的包
@@ -153,8 +154,10 @@ def get_sw_distributedname(sw_name, sw_version, project_svnpath):
     svn_info = subprocess.check_output(['svn', 'info'])
     svn_infolines = svn_info.split(os.linesep)
     svn_version = svn_infolines[6][6:]
-    buildtime = time.strftime("%Y%m%d", time.localtime(int(time.time()))).decode('UTF8')
-    distributedname = '%s-v%s-r%s-b%s' % (sw_name, sw_version, svn_version, buildtime)
+    buildtime = time.strftime(
+        "%Y%m%d", time.localtime(int(time.time()))).decode('UTF8')
+    distributedname = '%s-v%s-r%s-b%s' % (sw_name,
+                                          sw_version, svn_version, buildtime)
     info = [svn_version, buildtime]
     return project_localpath, distributedname, info
 
@@ -186,35 +189,38 @@ def getfiles(path):
 
 def gitLastCommitID():
     p = subprocess.Popen(
-    ['git','log', '--pretty=oneline', '-1'], 
-    stdin=subprocess.PIPE,
-    stdout=subprocess.PIPE,
-    shell = True,
+        ['git', 'log', '--pretty=oneline', '-1'],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        shell=True,
     )
     lastCommitId = p.stdout.readlines()[0][:40][-6:]
     return lastCommitId
 
+
 def getCurrentBranchName():
     p = subprocess.Popen(
-    ['git','branch'], 
-    stdin=subprocess.PIPE,
-    stdout=subprocess.PIPE,
-    shell = True,
+        ['git', 'branch'],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        shell=True,
     )
     branch = p.stdout.readlines()[0][2:-1]
     return branch
+
 
 def getCurrentTime():
     buildtime = datetime.today().strftime("%y%m%d")
     return buildtime
 
+
 def getBuildInfo():
     return dict(
-        sw_name = "AppClient",
-        sw_version = __version__,
-        lastCommitId = gitLastCommitID(),
-        branch = getCurrentBranchName(),
-        buildtime = getCurrentTime(),
+        sw_name="AppClient",
+        sw_version=__version__,
+        lastCommitId=gitLastCommitID(),
+        branch=getCurrentBranchName(),
+        buildtime=getCurrentTime(),
     )
 
 
@@ -237,7 +243,7 @@ if __name__ == '__main__':
         packages=[],
         excludes=[],
         includes=['atexit'],
-        icon="gui\skin\images\AppClient.ico",
+        icon=sw_logoico,
     )
 
     if sys.platform == 'win32':
@@ -249,8 +255,8 @@ if __name__ == '__main__':
         Executable(
             'main.py',
             base=base,
-            icon="gui\skin\images\AppClient.ico",
-            targetName="AppClient.exe",
+            icon=sw_logoico,
+            targetName="%s.exe" % sw_name,
             appendScriptToExe=False,
             appendScriptToLibrary=True,
         )
@@ -280,7 +286,13 @@ if __name__ == '__main__':
         os.mkdir(os.sep.join([build_path, item]))
 
     for item in ['skin']:
-        shutil.copytree(os.sep.join([os.getcwd(), 'gui', item]), os.sep.join([build_path, 'gui', item]))
+        shutil.copytree(
+            os.sep.join([os.getcwd(), 'gui', item]),
+            os.sep.join([build_path, 'gui', item])
+        )
 
     for item in ['config', 'DBFILE']:
-        shutil.copytree(os.sep.join([os.getcwd(), item]), os.sep.join([build_path, item]))
+        shutil.copytree(
+            os.sep.join([os.getcwd(), item]),
+            os.sep.join([build_path, item])
+        )
