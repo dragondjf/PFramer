@@ -79,6 +79,10 @@ class GuiManger(QObject):
         url = "https://developer.ford.com"
         QDesktopServices.openUrl(QUrl(url))
 
+    def actionObjectView(self):
+        from objbrowser import browse
+        browse(self)
+
     def actionAbout(self):
         if hasattr(self, 'aboutPage'):
             self.aboutPage.hide()

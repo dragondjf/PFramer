@@ -76,6 +76,12 @@ class SettingsMenu(FMenu):
                 ]
             },
             {
+                'name': self.tr('ObjectView'),
+                'icon': u'',
+                'shortcut': u'',
+                'trigger': 'ObjectView',
+            },
+            {
                 'name': self.tr('About'),
                 'icon': u'',
                 'shortcut': u'',

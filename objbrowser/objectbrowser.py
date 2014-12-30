@@ -87,22 +87,20 @@ class ObjectBrowser(FMainWindow):
         #  show_special_attributes) = self._readModelSettings(reset = reset, 
         #                                                     show_routine_attributes = show_routine_attributes,
         #                                                     show_special_attributes = show_special_attributes)
-        self._tree_model = TreeModel(obj, 
-                                     root_obj_name = name,
-                                     attr_cols = self._attr_cols,  
-                                     show_routine_attributes = show_routine_attributes, 
-                                     show_special_attributes = show_special_attributes)
+        self.show_routine_attributes = show_routine_attributes
+        self.show_special_attributes = show_special_attributes
+        
         # Views
+        self._setup_views()
+
+        self.setModel(obj)
+
         self._setup_actions()
         self._setup_menu()
-        self._setup_views()
+
         self.setWindowTitle("{} - {}".format(PROGRAM_NAME, name))
         app = QtGui.QApplication.instance()
         app.lastWindowClosed.connect(app.quit)
-
-        # Select first row so that a hidden root node will not be selected.
-        first_row = self._tree_model.first_item_index()
-        self.obj_tree.setCurrentIndex(first_row)
 
         self.initSize()
 
@@ -121,7 +119,24 @@ class ObjectBrowser(FMainWindow):
             desktopWidth * 0.6,
             desktopHeight * 0.8)
         self.moveCenter()
-            
+
+    def setModel(self, obj):
+        self._tree_model = TreeModel(obj, 
+            root_obj_name = '',
+            attr_cols = self._attr_cols,  
+            show_routine_attributes = self.show_routine_attributes,
+            show_special_attributes = self.show_special_attributes
+        )
+
+        self.obj_tree.setModel(self._tree_model)
+
+        first_row = self._tree_model.first_item_index()
+        self.obj_tree.setCurrentIndex(first_row)
+
+        # Connect signals
+        selection_model = self.obj_tree.selectionModel()
+        selection_model.currentChanged.connect(self._update_details)
+
     def _make_show_column_function(self, column_idx):
         """ Creates a function that shows or hides a column."""
         show_column = lambda checked: self.obj_tree.setColumnHidden(column_idx, not checked)
@@ -172,7 +187,6 @@ class ObjectBrowser(FMainWindow):
         # Tree widget
         self.obj_tree = ToggleColumnTreeView()
         self.obj_tree.setAlternatingRowColors(True)
-        self.obj_tree.setModel(self._tree_model)
         self.obj_tree.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.obj_tree.setUniformRowHeights(True)
         self.obj_tree.setAnimated(True)
@@ -238,10 +252,6 @@ class ObjectBrowser(FMainWindow):
         self.central_splitter.setSizes([400, 200])
         self.central_splitter.setStretchFactor(0, 10)
         self.central_splitter.setStretchFactor(1, 0)
-               
-        # Connect signals
-        selection_model = self.obj_tree.selectionModel()
-        selection_model.currentChanged.connect(self._update_details)
 
     # End of setup_methods
     
@@ -407,15 +417,18 @@ class ObjectBrowser(FMainWindow):
         """ Shows/hides the special callable objects.
             Callable objects are functions, methods, etc. They have a __call__ attribute. 
         """
+        self.show_routine_attributes = checked
         logger.debug("toggle_callables: {}".format(checked))
         self._tree_model.setShowCallables(checked)
         if self._tree_model.show_root_node:
-            self.obj_tree.expandToDepth(0)        
+            self.obj_tree.expandToDepth(0)
+
 
     def toggle_special_attributes(self, checked):
         """ Shows/hides the special attributes.
             Special attributes are objects that have names that start and end with two underscores.
         """
+        self.show_special_attributes = checked
         logger.debug("toggle_special_attributes: {}".format(checked))
         self._tree_model.setShowSpecialAttributes(checked)
         if self._tree_model.show_root_node:
