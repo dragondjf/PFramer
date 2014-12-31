@@ -85,8 +85,9 @@ class GuiManger(QObject):
             self.searchBar.hide()
             self.searchBar.deleteLater()
         self.searchBar = FGlobalSearchWidget(views['MainWindow'])
-        self.searchBar.animationShow()
         self.searchBar.searchEdit.setPlaceholderText(self.tr("Search object"))
+        self.searchBar.animationShow()
+        self.searchBar.setFocus()
         self.searchBar.searchEdit.returnPressed.connect(self.browserObj)
 
     def browserObj(self):
