@@ -109,7 +109,7 @@ class MainWindow(FMainWindow):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
-            self.close()
+            self.titleBar().closeButton.click()
         elif event.key() == Qt.Key_F11:
             if self.isFtitleBarExisted():
                 self.titleBar().maxButton.clicked.emit()
@@ -118,6 +118,8 @@ class MainWindow(FMainWindow):
         elif event.key() == Qt.Key_F8:
             bar = self.statusBar()
             bar.setVisible(not bar.isVisible())
+        elif event.key() == Qt.Key_F12:
+            self.guimanger.actionObjectView()
 
     # def closeEvent(self, evt):
     #     flag, exitflag = dialogs.exit(windowsoptions['exitdialog'])

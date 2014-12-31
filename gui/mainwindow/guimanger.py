@@ -80,8 +80,45 @@ class GuiManger(QObject):
         QDesktopServices.openUrl(QUrl(url))
 
     def actionObjectView(self):
+        from qframer import FGlobalSearchWidget
+        if hasattr(self, 'searchBar'):
+            self.searchBar.hide()
+            self.searchBar.deleteLater()
+        self.searchBar = FGlobalSearchWidget(views['MainWindow'])
+        self.searchBar.animationShow()
+        self.searchBar.searchEdit.setPlaceholderText(self.tr("Search object"))
+        self.searchBar.searchEdit.returnPressed.connect(self.browserObj)
+
+    def browserObj(self):
         from objbrowser import browse
-        browse(globals())
+        objstr = self.sender().text()
+
+        def getRootObj(objstr):
+            if objstr in self.locals:
+                return self.locals[objstr]
+            elif objstr in self.globals:
+                return self.globals[objstr]
+            else:
+                return None
+
+        if '.' not in objstr:
+            obj = getRootObj(objstr)
+            if obj:
+                browse(obj)
+            else:
+                print("root obj not found")
+        else:
+            objlist = objstr.split('.')
+            ret = getRootObj(objlist[0])
+            if ret:
+                try:
+                    for attr in objlist[1:]:
+                        ret = getattr(ret, attr)
+                    browse(ret)
+                except Exception as e:
+                    print(e)
+            else:
+                print("root obj not found")
 
     def actionAbout(self):
         if hasattr(self, 'aboutPage'):

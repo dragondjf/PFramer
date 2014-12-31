@@ -84,7 +84,7 @@ class SettingsMenu(FMenu):
             {
                 'name': self.tr('About'),
                 'icon': u'',
-                'shortcut': u'',
+                'shortcut': u'Qt.Key_F12',
                 'trigger': 'About',
             },
             {

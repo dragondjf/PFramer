@@ -83,10 +83,10 @@ class ObjectBrowser(FMainWindow):
         self._attr_cols = attribute_columns
         self._attr_details = attribute_details
         
-        # (show_routine_attributes, 
-        #  show_special_attributes) = self._readModelSettings(reset = reset, 
-        #                                                     show_routine_attributes = show_routine_attributes,
-        #                                                     show_special_attributes = show_special_attributes)
+        (show_routine_attributes, 
+         show_special_attributes) = self._readModelSettings(reset = reset, 
+                                                            show_routine_attributes = show_routine_attributes,
+                                                            show_special_attributes = show_special_attributes)
         self.show_routine_attributes = show_routine_attributes
         self.show_special_attributes = show_special_attributes
         
@@ -200,6 +200,7 @@ class ObjectBrowser(FMainWindow):
         obj_tree_header.setMovable(True)
         obj_tree_header.setStretchLastSection(False)
         for action in self.obj_tree.toggle_column_actions_group.actions():
+            print('++++')
             self.show_cols_submenu.addAction(action)
 
         central_layout.addWidget(self.obj_tree)

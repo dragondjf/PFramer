@@ -8,5 +8,6 @@ from .ftitlebar import FTitleBar
 from .fstatusbar import FStatusBar
 from .fmainwindow import FMainWindow
 from .fsuspensionwidget import FSuspensionWidget
+from .fglobalsearch import FGlobalSearchWidget
 from .fsplashscreen import FSplashScreen
 from .fwebkitbasepage import FWebkitBasePage

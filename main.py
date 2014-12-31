@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+os.environ['QT_API'] = "PySide"
 from qframer.qt.QtCore import *
 from qframer.qt.QtGui import *
 from qframer import FSplashScreen
@@ -23,6 +24,9 @@ if __name__ == '__main__':
     else:
         mainwindow = MainWindow()
         mainwindow.show()
+
+    mainwindow.guimanger.globals = globals()
+    mainwindow.guimanger.locals = locals()
 
     exitCode = app.exec_()
     sys.exit(exitCode)
