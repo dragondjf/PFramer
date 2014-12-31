@@ -34,7 +34,7 @@ from log import logger
 from qframer.qt.QtCore import *
 from qframer.qt.QtGui import *
 import json
-from dataBase import signal_DB
+from database import signal_DB
 import time
 
 
