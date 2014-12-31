@@ -3,9 +3,10 @@
 
 from .qt.QtCore import *
 from .qt.QtGui import *
+from .fmoveablewidget import FMoveableWidget
 
 
-class FGlobalSearchWidget(QFrame):
+class FGlobalSearchWidget(FMoveableWidget):
 
     style = '''
         QFrame#FGlobalSearchWidget{
@@ -31,7 +32,7 @@ class FGlobalSearchWidget(QFrame):
         self._initHideAnimation()
 
     def initData(self):
-        self._currentPos = QPoint(0, 0)
+        pass
 
     def initUI(self):
         self.setFixedSize(600, 60)
@@ -61,7 +62,7 @@ class FGlobalSearchWidget(QFrame):
         self.hideanimation.setEndValue(0)
         self.hideanimation.setDuration(1000)
         self.hideanimation.setEasingCurve(QEasingCurve.OutCubic)
-        self.hideanimation.finished.connect(self.hide)
+        self.hideanimation.finished.connect(self.close)
 
     def animationShow(self):
         self.show()
@@ -69,23 +70,6 @@ class FGlobalSearchWidget(QFrame):
 
     def animationHide(self):
         self.hideanimation.start()
-
-    def mousePressEvent(self, event):
-        # 按住左键可以托动窗口，按下右键关闭程序
-        if event.button() == Qt.LeftButton:
-            self._currentPos = event.globalPos() - self.frameGeometry().topLeft()
-            event.accept()
-        elif event.button() == Qt.RightButton:
-            if self._contextMenu:
-                self._contextMenu.exec_(QCursor.pos())
-
-    def mouseDoubleClickEvent(self, event):
-        self.animationHide()
-
-    def mouseMoveEvent(self, event):
-        if event.buttons() & Qt.LeftButton:
-            self.move(event.globalPos() - self._currentPos)
-            event.accept()
 
     def leaveEvent(self, event):
         self.setCursor(Qt.ArrowCursor)
@@ -95,4 +79,4 @@ class FGlobalSearchWidget(QFrame):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
-            self.close()
+            self.animationHide()

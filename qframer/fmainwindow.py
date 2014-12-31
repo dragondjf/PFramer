@@ -60,9 +60,7 @@ class FMainWindow(QMainWindow):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
     def _initSystemTray(self):
-        self.systemTrayIcon = QIcon("gui/skin/images/PFramer.ico")
-        self.systemTray = QSystemTrayIcon(self.systemTrayIcon, self)
-        self.systemTray.show()
+        self.systemTray = QSystemTrayIcon(self)
         self.systemTray.activated.connect(self.onSystemTrayIconClicked)
 
     def onSystemTrayIconClicked(self, reason):
@@ -132,6 +130,9 @@ class FMainWindow(QMainWindow):
         super(FMainWindow, self).setWindowIcon(qicon)
         if self.isFtitleBarExisted():
             self._titleBar.setLogo(qicon)
+
+        self.systemTray.setIcon(qicon)
+        self.systemTray.show()
 
     def setWindowTitle(self, title):
         super(FMainWindow, self).setWindowTitle(title)
