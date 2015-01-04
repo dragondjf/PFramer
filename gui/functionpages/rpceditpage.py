@@ -111,7 +111,7 @@ class BaseRPCEditFrame(QFrame):
 
     @property
     def endX(self):
-        if views['MainWindow'].getModeFlag():
+        if views['MainWindow'].isDesktopMode():
             return 0
         else:
             return self.parent.ListWidgetWidth_desktop
@@ -133,7 +133,7 @@ class BaseRPCEditFrame(QFrame):
 
     @property
     def w(self):
-        if views['MainWindow'].getModeFlag():
+        if views['MainWindow'].isDesktopMode():
             width = self.parent.width()
         else:
             width = self.parent.width() - self.parent.ListWidgetWidth_desktop

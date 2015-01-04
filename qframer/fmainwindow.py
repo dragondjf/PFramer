@@ -100,7 +100,7 @@ class FMainWindow(QMainWindow):
     def _initTitlebarConnect(self):
         if self.isFtitleBarExisted():
             self._titleBar.locked.connect(self.setLocked)
-            self._titleBar.modeed.connect(self.setMode)
+            self._titleBar.modeed.connect(self.setDesktopMode)
             self._titleBar.pined.connect(self.setPined)
             self._titleBar.minimized.connect(self.showMinimized)
             self._titleBar.maximized.connect(self.swithMaxNormal)
@@ -139,14 +139,14 @@ class FMainWindow(QMainWindow):
         if self.isFtitleBarExisted():
             self._titleBar.setTitle(title)
 
-    def setMode(self, flag):
+    def setDesktopMode(self, flag):
         self._modeflag = flag
         if flag:
             self.resize(self.phone_size.width(), self.height())
         else:
             self.resize(self.default_size)
 
-    def getModeFlag(self):
+    def isDesktopMode(self):
         return self._modeflag
 
     def setPined(self, flag):
@@ -157,6 +157,9 @@ class FMainWindow(QMainWindow):
             self.setWindowFlags(
                 self.windowFlags() & (~Qt.WindowStaysOnTopHint))
         self.show()
+
+    def isPined(self):
+        return self._pinflag
 
     def setLocked(self, flag):
         self._lockflag = flag

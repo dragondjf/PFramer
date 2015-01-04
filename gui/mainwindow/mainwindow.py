@@ -120,6 +120,8 @@ class MainWindow(FMainWindow):
             bar.setVisible(not bar.isVisible())
         elif event.key() == Qt.Key_F12:
             self.guimanger.actionObjectView()
+        else:
+            super(MainWindow, self).keyPressEvent(event)
 
     # def closeEvent(self, evt):
     #     flag, exitflag = dialogs.exit(windowsoptions['exitdialog'])

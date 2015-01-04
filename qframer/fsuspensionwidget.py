@@ -6,7 +6,9 @@ from .qt.QtGui import *
 
 
 class FSuspensionWidget(QFrame):
-
+    '''
+        悬浮窗口
+    '''
     def __init__(self, filename=None, parent=None):
         super(FSuspensionWidget, self).__init__(parent)
         self.parent = parent
