@@ -9,6 +9,7 @@ from qframer.qt.QtGui import *
 from qframer import views, collectView
 from qframer import FMainWindow
 from qframer import FSuspensionWidget
+from qframer import FFloatWidget
 from qframer import setSkinForApp
 import qframer.dialogs as dialogs
 
@@ -53,6 +54,9 @@ class MainWindow(FMainWindow):
             'gui/skin/images/PFramer.png', self)
         self.suspensionWidget.setContextMenu(self.settingsMenu)
         self.suspensionWidget.move(self.frameGeometry().topRight() + QPoint(20, 20))
+
+        self.floatWidget = FFloatWidget(self)
+        self.floatWidget.setObjectName("FloatWidget")
 
     def initSize(self):
         mainwindow = windowsoptions['mainwindow']
@@ -107,6 +111,19 @@ class MainWindow(FMainWindow):
     def setskin(self, skinID="BB"):
         setSkinForApp('gui/skin/qss/%s.qss' % skinID)  # 设置主窗口样式
 
+    def hideEvent(self, event):
+        super(MainWindow, self).hideEvent(event)
+        if hasattr(self, 'floatWidget') and self.floatWidget:
+            if self.floatWidget.titleBar.isPined():
+                self.floatWidget.setVisible(True)
+            else:
+                self.floatWidget.setVisible(False)
+
+    def showEvent(self, event):
+        super(MainWindow, self).showEvent(event)
+        if hasattr(self, 'floatWidget') and self.floatWidget:
+            self.floatWidget.setVisible(True)
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.titleBar().closeButton.click()
@@ -122,6 +139,11 @@ class MainWindow(FMainWindow):
             self.guimanger.actionObjectView()
         else:
             super(MainWindow, self).keyPressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        super(MainWindow, self).mouseMoveEvent(event)
+        if hasattr(self, 'floatWidget') and self.floatWidget:
+            self.floatWidget.setGeometry(self.floatWidget.endRect)
 
     # def closeEvent(self, evt):
     #     flag, exitflag = dialogs.exit(windowsoptions['exitdialog'])

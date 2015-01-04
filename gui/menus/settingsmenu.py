@@ -27,6 +27,12 @@ class SettingsMenu(FMenu):
                 'trigger': 'Suspension',
             },
             {
+                'name': self.tr('Show float window'),
+                'icon': u'',
+                'shortcut': u'',
+                'trigger': 'Float',
+            },
+            {
                 'name': self.tr('Language'),
                 'trigger': 'Language',
                 'type': 'submenu',

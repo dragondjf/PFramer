@@ -69,6 +69,10 @@ class GuiManger(QObject):
         else:
             self.sender().setText('Show suspension window')
 
+    def actionFloat(self):
+        sw = views['MainWindow'].floatWidget
+        sw.animationShow()
+
     def actionAndroidDeveloper(self):
         logger.info("Android guide")
 
