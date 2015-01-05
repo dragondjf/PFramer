@@ -16,7 +16,7 @@ import qframer.dialogs as dialogs
 
 from gui.uiconfig import windowsoptions
 from gui.menus import SettingsMenu, SkinMenu
-from gui.floatwindows import LogWindow, HistoryWindow, FloatWindow
+from gui.floatwindows import LogWindow, HistoryWindow, InitHistoryWindow, FloatWindow
 from gui.functionpages import RPCEditPage
 from .guimanger import GuiManger
 
@@ -96,14 +96,21 @@ class MainWindow(FMainWindow):
 
         # History
         self.historywindow = HistoryWindow(self)
-        self.historyfloatwindow = FloatWindow(
-            self.historywindow, self.tr("Histroy"), self)
+        self.historyfloatwindow = FloatWindow(self.historywindow, self.tr("Histroy"), self)
         self.addDockWidget(Qt.BottomDockWidgetArea, self.historyfloatwindow)
+
+        # Init History
+        self.initHistorywindow = InitHistoryWindow(parent=self)
+        self.initHistoryFloatwindow = FloatWindow(self.initHistorywindow, self.tr("Init"), self)
+        self.addDockWidget(Qt.BottomDockWidgetArea, self.initHistoryFloatwindow)
+
 
         self.logfloatwindow.setFixedHeight(194)
         self.historyfloatwindow.setFixedHeight(194)
+        self.initHistoryFloatwindow.setFixedHeight(194)
 
         self.tabifyDockWidget(self.logfloatwindow, self.historyfloatwindow)
+        self.tabifyDockWidget(self.historyfloatwindow, self.initHistoryFloatwindow)
 
         self.tabbar = self.findChildren(QTabBar)
         self.tabbar[0].setCurrentIndex(0)

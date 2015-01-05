@@ -136,8 +136,7 @@ class FFloatWidget(FMoveableWidget):
     def __init__(self, parent=None):
         super(FFloatWidget, self).__init__()
         self.parent = parent
-        self.setWindowFlags(Qt.FramelessWindowHint)
-        self.setWindowFlags(Qt.ToolTip)
+        self.setWindowFlags(Qt.SubWindow | Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
 
         self._initShowAnimation()
         self._initHideAnimation()
@@ -211,10 +210,6 @@ class FFloatWidget(FMoveableWidget):
 
     def setFlags(self, flag):
         if flag:
-            self.setWindowFlags(Qt.FramelessWindowHint)
-            self.setWindowFlags(Qt.SplashScreen)
-            self.show()
+            self.setWindowFlags(Qt.SubWindow | Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
         else:
-            self.setWindowFlags(Qt.FramelessWindowHint)
-            self.setWindowFlags(Qt.ToolTip)
-            self.show()
+            self.setWindowFlags(Qt.SubWindow | Qt.FramelessWindowHint)

@@ -6,7 +6,7 @@ from qframer.qt.QtGui import *
 
 from gui.functionpages import LoginPage, AboutPage, ExitPage
 from qframer import views, collectView
-
+from database import signal_DB
 from log import logger
 
 
@@ -26,6 +26,13 @@ class GuiManger(QObject):
 
         # for key, p in rpcApp.plugins.items():
         #     print(key, p.__dict__)
+
+        rpcs = [{
+            'type': 'show %d' % i,
+            'data': {"show": 'dfdfdfdf', 'text': [i, i, i]}
+        } for i in range(10)]
+
+        signal_DB.uu_initAddBatch.emit(rpcs)
 
     def menuActionConnect(self):
         if hasattr(views['MainWindow'].menuBar(), 'qactions'):
