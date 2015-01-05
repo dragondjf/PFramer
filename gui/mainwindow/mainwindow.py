@@ -122,14 +122,14 @@ class MainWindow(FMainWindow):
         super(MainWindow, self).hideEvent(event)
         if hasattr(self, 'floatWidget') and self.floatWidget:
             if self.floatWidget.titleBar.isPined():
-                self.floatWidget.setVisible(True)
+                self.floatWidget.show()
             else:
-                self.floatWidget.setVisible(False)
+                self.floatWidget.hide()
 
     def showEvent(self, event):
         super(MainWindow, self).showEvent(event)
         if hasattr(self, 'floatWidget') and self.floatWidget:
-            self.floatWidget.setVisible(True)
+            self.floatWidget.show()
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
