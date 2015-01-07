@@ -42,11 +42,9 @@ class MainWindow(FMainWindow):
         self.initMenus()
 
         self.initTitleBar()
-        self.setCentralWidget(RPCEditPage(self))
+        self.setCentralWidget(QLabel(self))
 
         self.initDockwindow()
-
-        self.statusBar().datatimelabel.setObjectName("datatimelabel")
 
         self.setSystemTrayMenu(self.settingsMenu)
 
@@ -74,8 +72,6 @@ class MainWindow(FMainWindow):
 
     def initTitleBar(self):
         if self.isFtitleBarExisted():
-            self.titleBar().setObjectName("FTitleBar")
-            self.titleBar().titleLabel.setObjectName("TitleLabel")
             self.titleBar().closeButton.setObjectName("close")
             self.titleBar().settingDownButton.setMenu(self.settingsMenu)
             self.titleBar().skinButton.setMenu(self.skinMenu)
