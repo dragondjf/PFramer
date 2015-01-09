@@ -17,7 +17,6 @@ import zipfile
 import json
 from settings import __version__
 from cx_Freeze import setup, Executable
-import PySide
 
 
 def change_package_fromLib(rootpath, package_name):
@@ -241,8 +240,11 @@ if __name__ == '__main__':
         path = os.sep.join([os.getcwd(), key])
         delete_file_folder(path)
 
-    path_pyside = PySide.__path__[0]
-    build_path = os.sep.join([os.getcwd(), 'build', 'exe.win32-2.7'])
+    pyversion = 'exe.%s.%s.%s' % (sys.platform,
+                                  sys.version_info.major,
+                                  sys.version_info.minor)
+
+    build_path = os.sep.join([os.getcwd(), 'build', pyversion])
 
     sys.argv.append("build")
     setup(
@@ -264,10 +266,4 @@ if __name__ == '__main__':
         shutil.copytree(
             os.sep.join([os.getcwd(), 'gui', item]),
             os.sep.join([build_path, 'gui', item])
-        )
-
-    for item in ['config', 'DBFILE']:
-        shutil.copytree(
-            os.sep.join([os.getcwd(), item]),
-            os.sep.join([build_path, item])
         )
