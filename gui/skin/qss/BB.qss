@@ -9,6 +9,7 @@ email: dragondjf@gmail.com
 /******************** QMainWindow**********************/
 QMainWindow{
     background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:1, fx:0.5, fy:0.5, stop:0 rgba(119, 255, 255, 255), stop:1 rgba(32, 127, 155, 255));
+    /*border-image: url(gui/skin/images/bear.jpg)*/
 }
 /*********************QMainWindow***********************/
 
