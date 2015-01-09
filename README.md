@@ -14,6 +14,9 @@ PFramer是[QFramer](https://github.com/dragondjf/QFramer)的Python增强版本�
 ##### 3. 预览
 ![1](./doc/preview.png)
 
+#####4. 协议:
+遵循GNU GPL v3协议。
+
 参考第三方库：
 
 + [QFramer](https://github.com/dragondjf/QFramer)
