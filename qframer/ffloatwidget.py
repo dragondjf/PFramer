@@ -17,6 +17,7 @@ class BaseToolButton(QToolButton):
         self.setIconSize(iconBaseSize)
         self.setFixedSize(30, baseHeight)
 
+
 class FTitleBar(QFrame):
 
     settingMenuShowed = Signal()

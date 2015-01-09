@@ -6,9 +6,11 @@ from .qt.QtGui import *
 
 
 class FSuspensionWidget(QFrame):
+
     '''
-        悬浮窗口
+        Suspension window
     '''
+
     def __init__(self, filename=None, parent=None):
         super(FSuspensionWidget, self).__init__(parent)
         self.parent = parent
@@ -36,9 +38,13 @@ class FSuspensionWidget(QFrame):
         self._contextMenu = menu
 
     def mousePressEvent(self, event):
-        # 按住左键可以托动窗口，按下右键关闭程序
+        '''
+        press left button in mouse to move window
+        press right button in mouse to close contextMenu
+        '''
         if event.button() == Qt.LeftButton:
-            self._currentPos = event.globalPos() - self.frameGeometry().topLeft()
+            self._currentPos = event.globalPos() - \
+                self.frameGeometry().topLeft()
             event.accept()
         elif event.button() == Qt.RightButton:
             if self._contextMenu:

@@ -45,7 +45,7 @@ class FGlobalSearchWidget(FMoveableWidget):
         self.setLayout(mainLayout)
 
         desktopWidth = QDesktopWidget().availableGeometry().width()
-        self.move((desktopWidth - self.width())/2, 50)
+        self.move((desktopWidth - self.width()) / 2, 50)
 
         self.setStyleSheet(self.style)
 
