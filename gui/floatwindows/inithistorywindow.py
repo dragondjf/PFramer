@@ -43,12 +43,15 @@ from qframer import FDragRowsTableWidget
 class InitHistoryWindow(FDragRowsTableWidget):
     # render the log window
 
+    col_1_width = 120
+    col_2_width = 320
+
     def __init__(self, rows=0, cloumns=2, parent=None):
         super(InitHistoryWindow, self).__init__(rows, cloumns, parent)
         self.parent = parent
         self.setHorizontalHeaderLabels(['Type', 'Data'])
-        self.setColumnWidth(0, 120)
-        self.setColumnWidth(1, 320)
+        self.setColumnWidth(0, self.col_1_width)
+        self.setColumnWidth(1, self.col_2_width)
 
         self.initData()
         self.initContextMenu()
@@ -64,12 +67,12 @@ class InitHistoryWindow(FDragRowsTableWidget):
         signal_DB.uu_initAddBatch.connect(self.addItems)
 
     def clearAllRows(self):
-        for i in xrange(self.rowCount()):
+        for i in range(self.rowCount()):
             self.removeRow(0)
 
     def addItem(self, message, color="white"):
         self.insertRow(0)
-        for col in xrange(self.columnCount()):
+        for col in range(self.columnCount()):
             if col == 0:
                 newItem = QTableWidgetItem(message['type'])
             else:
@@ -123,7 +126,6 @@ class InitHistoryWindow(FDragRowsTableWidget):
 
     def updateItem(self, row, col):
         rpc = self.getDataFromRow(row)
-        print(rpc)
         signal_DB.uu_initEdit.emit(rpc)
 
     def editItem(self):
@@ -133,3 +135,6 @@ class InitHistoryWindow(FDragRowsTableWidget):
     def deleteItem(self):
         if self.index is not None:
             self.removeRow(self.index.row())
+
+    def resizeEvent(self, event):
+        self.setColumnWidth(1, self.width() - self.col_1_width - self.verticalScrollBar().width())

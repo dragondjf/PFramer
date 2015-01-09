@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-from qt.QtCore import *
-from qt.QtGui import *
+from .qt.QtCore import *
+from .qt.QtGui import *
 
 
 class FDragRowsTableWidget(QTableWidget):
@@ -159,3 +159,66 @@ class FDragRowsTableWidget(QTableWidget):
             ).y() else QAbstractItemView.BelowItem
 
         return r
+
+
+class FDetailShow(QTextEdit):
+
+    def __init__(self, jsondata, parent=None):
+        super(FDetailShow, self).__init__(parent)
+        self.parent = parent
+        self.setText(jsondata)
+        self.setReadOnly(True)
+        self.installEventFilter(self)
+        self.setFocus()
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.RightButton:
+            pass
+        else:
+            super(FDetailShow, self).mousePressEvent(event)
+
+
+class FTableItemDetailWidget(QFrame):
+
+    def __init__(self, jsondata, row, column, parent=None):
+        super(FTableItemDetailWidget, self).__init__(parent)
+        self.parent = parent
+        self.startX = 0
+        self.row = row
+        for i in range(column):
+            self.startX += self.parent.columnWidth(i)
+        self.setWindowFlags(Qt.Popup)
+        self.setFixedSize(self.parent.columnWidth(3), 220)
+        detailShow = FDetailShow(jsondata, self)
+        detailShow.setFixedSize(self.width(), 200)
+
+        self.titleLabel = QLabel("Data", self)
+        self.titleLabel.setAlignment(Qt.AlignCenter)
+        self.titleLabel.setObjectName("FTableItemDetailWidgetTitlebar")
+        self.titleLabel.setFixedSize(self.parent.columnWidth(3), 20)
+        mainlayout = QVBoxLayout()
+        mainlayout.addWidget(self.titleLabel)
+        mainlayout.addWidget(detailShow)
+        mainlayout.setSpacing(0)
+        mainlayout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(mainlayout)
+        self.installEventFilter(self)
+
+        self.show()
+
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.MouseButtonPress:
+            self.close()
+            return True
+        else:
+            return super(FTableItemDetailWidget, self).eventFilter(obj, event)
+
+    def showDetail(self):
+        self.jsonshowPosX = self.parent.mapToGlobal(QPoint(self.startX, 0)).x()
+        self.jsonshowPosY = self.parent.mapToGlobal(QPoint(self.startX, self.parent.rowViewportPosition(self.row))).y()\
+            - self.height() + self.parent.horizontalHeader().height()
+        self.move(self.jsonshowPosX, self.jsonshowPosY)
+        self.show()
+
+    def resizeEvent(self, event):
+        self.titleLabel.setFixedWidth(self.width())

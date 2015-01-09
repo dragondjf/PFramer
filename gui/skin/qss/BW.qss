@@ -212,6 +212,17 @@ QLineEdit:hover{
 /*******************QLineEdit****************************/
 
 
+/*******************QTextEdit*****************************/
+QTextEdit{
+    color: white;
+    background-color:rgb(47, 54, 65);
+    font-size: 12px;
+    font-family: "Verdana";
+    border: none;
+}
+/*******************QTextEdit****************************/
+
+
 /*******************QToolButton****************************/
 QToolButton{
     background-color: transparent;
@@ -370,10 +381,11 @@ QSizeGrip {
 
 /*******************QHeaderView****************************/
 QHeaderView::section {
-    background-color: #3b4351;
+    background-color: rgb(40, 47, 63);
     color: white;
+    height: 20px;
     padding-left: 4px;
-    border: 1px solid #6c6c6c;
+    border: 1px solid #112233;
  }
 
 QHeaderView::section:checked {
@@ -382,19 +394,6 @@ QHeaderView::section:checked {
 
 QHeaderView::section:checked {
     background-color: white;
-}
-
-QHeaderView{
-    background-color: rgb(34, 44, 56);
-}
-
-QHeaderView::section {
-    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(33, 50, 70, 255), stop:1 rgba(255, 255, 255, 255));;
-    color: white;
-    font-size: 16px;
-    min-height: 25px;
-    padding-left: 4px;
-    border: 1px solid #252a31;
 }
 
 /*******************QHeaderView****************************/
@@ -559,3 +558,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
     background: none;
 }
 /*******************QScrollBar*****************************/
+
+QLabel#FTableItemDetailWidgetTitlebar{
+    background-color: rgb(40, 47, 63);
+}

@@ -30,17 +30,16 @@
 import sys
 import os
 import logging
-from log import logger
 from qframer.qt.QtCore import *
 from qframer.qt.QtGui import *
 import json
 from database import signal_DB
-import time
-# from jsonTree import JsonTreeWidget
+from qframer import FTableItemDetailWidget
 
 
 class LogWindow(QTableWidget):
-    #render the log window
+    # render the log window
+
     def __init__(self, parent=None, rows=0, cloumns=4):
         super(LogWindow, self).__init__(rows, cloumns, parent)
         self.parent = parent
@@ -59,20 +58,23 @@ class LogWindow(QTableWidget):
         self.setColumnWidth(0, 60)
         self.setColumnWidth(1, 170)
         self.setColumnWidth(2, 80)
-        self.setColumnWidth(3, 470)
+        # self.setColumnWidth(3, 470)
 
         signal_DB.su_logsin.connect(self.addLog)
 
-        t = {u'function': u'RegisterAppInterface', u'type': u'request', u'correlation_id': 65529, u'data': {u'vrSynonyms': [u'djf'], u'appName': u'djf', u'languageDesired': u'EN-US', u'syncMsgVersion': {u'majorVersion': 1, u'minorVersion': 0}, u'ttsName': [{u'text': u'Sync Proxy Tester', u'type': u'TEXT'}], u'isMediaApplication': True, u'appID': u'584421907', u'hmiDisplayLanguageDesired': u'EN-US', u'ngnMediaScreenAppName': u'djf'}, u'app_id': 65538}
-        t = {u'function': u'RegisterAppInterface', u'type': u'request', u'correlation_id': 65529, u'data': {u'vrSynonyms': [u'djf']}}
-        t = {"function" : "Speak","data" : {"ttsChunks" : [{"text" : "huan1ying2使用百度地图 , 请在手机端打开百度地图","type" : "TEXT",'a':[1,2,3,4]}]},"correlation_id" : 6,"type" : "request"}
+        t = {u'function': u'RegisterAppInterface', u'type': u'request', u'correlation_id': 65529, u'data': {u'vrSynonyms': [u'djf'], u'appName': u'djf', u'languageDesired': u'EN-US', u'syncMsgVersion': {u'majorVersion': 1, u'minorVersion': 0}, u'ttsName': [
+            {u'text': u'Sync Proxy Tester', u'type': u'TEXT'}], u'isMediaApplication': True, u'appID': u'584421907', u'hmiDisplayLanguageDesired': u'EN-US', u'ngnMediaScreenAppName': u'djf'}, u'app_id': 65538}
+        t = {u'function': u'RegisterAppInterface', u'type': u'request',
+             u'correlation_id': 65529, u'data': {u'vrSynonyms': [u'djf']}}
+        t = {"function": "Speak", "data": {"ttsChunks": [
+            {"text": "huan1ying2使用百度地图 , 请在手机端打开百度地图", "type": "TEXT", 'a': [1, 2, 3, 4]}]}, "correlation_id": 6, "type": "request"}
 
         for i in range(20):
             self.addLog(t)
 
         self.column3_x = 0
         for i in range(3):
-            self.column3_x +=  self.columnWidth(i)
+            self.column3_x += self.columnWidth(i)
 
         # self.installEventFilter(self)
         self.horizontalHeader().setEnabled(False)
@@ -122,197 +124,31 @@ class LogWindow(QTableWidget):
             #     newItem.setFlags(0)
             if u'response' in message:
                 messageDict = json.loads(message[3])
-                if u'resultCode' in messageDict and  messageDict[u'success'] is True:
+                if u'resultCode' in messageDict and \
+                        messageDict[u'success'] is True:
                     newItem.setForeground(QBrush(QColor("#22DDB8")))
-                elif u'resultCode' in messageDict and messageDict[u'success'] is False:
+                elif u'resultCode' in messageDict and \
+                        messageDict[u'success'] is False:
                     newItem.setForeground(QBrush(QColor("#FF6699")))
             elif message[2] == u"notification":
                 newItem.setForeground(QBrush(QColor("yellow")))
             else:
                 newItem.setForeground(QBrush(QColor("black")))
-            self.setItem(0, col, newItem)        # request = json.loads(message[2])
+            # request = json.loads(message[2])
+            self.setItem(0, col, newItem)
 
     def showDetail(self, row, column):
         if column == 3:
             data = json.loads(self.item(row, column).text())
             jsondata = json.dumps(data, ensure_ascii=False, indent=4)
-            tabledetail = TableItemDetailWidget(jsondata, row, 3, self)
+            tabledetail = FTableItemDetailWidget(jsondata, row, 3, self)
             tabledetail.showDetail()
 
     def resizeEvent(self, event):
-        if event.size().width() > 568:
-            logwidth = event.size().width() - self.column3_x
-            self.setColumnWidth(3, logwidth)
-        super(LogWindow, self).resizeEvent(event)
-
-
-def fommat(d):
-    for key in d:
-        if isinstance(d[key], list):
-            d.update({key: list2dict(d[key])})
-        elif isinstance(d[key], dict):
-            fommat(d[key])
-    return d
-
-
-def list2dict(l):
-    l = [(l.index(i), i) for i in l]
-    return dict(l)
-
-
-class TableItemDetailWidget(QFrame):
-
-    style = '''
-        QFrame#TableItemDetailWidget{
-            color: white;
-            background-color:rgb(47, 54, 65);
-            font-size: 12px;
-            font-family: "Verdana";
-            border: none;
-
-        }
-        QLabel#titlebar{
-            background-image: url(gui/skin/PNG/bg_dock.png);
-            border: none;
-        }
-
-    '''
-
-    def __init__(self, jsondata, row, column, parent=None):
-        super(TableItemDetailWidget, self).__init__(parent)
-        self.parent = parent
-        self.startX = 0
-        self.row = row
-        for i in range(column):
-            self.startX += self.parent.columnWidth(i)
-
-        self.setObjectName("TableItemDetailWidget")
-        self.setWindowFlags(Qt.Popup)
-        self.setFixedSize(self.parent.columnWidth(3), 220)
-        detailShow = DetailShow(jsondata, self)
-        detailShow.setFixedSize(self.width(), 200)
-
-        self.titleLabel =QLabel("Data", self)
-        self.titleLabel.setAlignment(Qt.AlignCenter)
-        self.titleLabel.setObjectName("titlebar")
-        self.titleLabel.setFixedSize(self.parent.columnWidth(3), 20)
-        mainlayout = QVBoxLayout()
-        mainlayout.addWidget(self.titleLabel)
-        mainlayout.addWidget(detailShow)
-        mainlayout.setSpacing(0)
-        mainlayout.setContentsMargins(0,0,0,0)
-        self.setLayout(mainlayout)
-        self.installEventFilter(self)
-
-        self.setStyleSheet(self.style)
-
-        self.show()
-
-    def eventFilter(self, obj, event):
-        if event.type() == QEvent.MouseButtonPress:
-            self.close()
-            return  True
-        else:
-            return super(TableItemDetailWidget, self).eventFilter(obj, event)
-
-    def showDetail(self):
-        self.jsonshowPosX = self.parent.mapToGlobal(QPoint(self.startX, 0)).x()
-        self.jsonshowPosY = self.parent.mapToGlobal(QPoint(self.startX, self.parent.rowViewportPosition(self.row))).y()\
-         - self.height()  + self.parent.horizontalHeader().height()
-        self.move(self.jsonshowPosX, self.jsonshowPosY)
-        super(TableItemDetailWidget, self).show()
-
-    def resizeEvent(self, event):
-        self.titleLabel.setFixedWidth(self.width())
-
-
-class DetailShow(QTextEdit):
-    style = '''
-        QTextEdit{
-            color: white;
-            background-color:rgb(47, 54, 65);
-            font-size: 12px;
-            font-family: "Verdana";
-            border: none;
-        }
-        QScrollBar:vertical {
-            border: 1px solid #252A31;
-            width: 10px;
-            margin: 15px 0 15px 0;
-            background: #31394E;
-        }
-        QScrollBar::handle:vertical {
-            background: #5B677A;
-            min-height: 20px;
-        }
-
-        QScrollBar::add-line:vertical {
-            background: #252A31;
-            height: 20px;
-            subcontrol-position: bottom;
-            subcontrol-origin: margin;
-        }
-
-        QScrollBar::sub-line:vertical {
-            background: #252A31;
-            height: 20px;
-            subcontrol-position: top;
-            subcontrol-origin: margin;
-        }
-
-        /*QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
-            width: 3px;
-            height: 3px;
-            background: #31394E;
-        }*/
-
-        QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
-            background: none;
-        }
-
-
-        QScrollBar:horizontal {
-            border: 1px solid #252A31;
-            background: #5B677A;
-            height: 10px;
-            margin: 0px 15px 0 15px;
-        }
-        QScrollBar::handle:horizontal {
-            background: #31394E;
-            min-width: 20px;
-        }
-        QScrollBar::add-line:horizontal {
-            background: #252A31;
-            width: 20px;
-            subcontrol-position: right;
-            subcontrol-origin: margin;
-        }
-        QScrollBar::sub-line:horizontal {
-            background: #252A31;
-            width: 20px;
-            subcontrol-position: left;
-            subcontrol-origin: margin;
-        }
-        /*QScrollBar:left-arrow:horizontal, QScrollBar::right-arrow:horizontal {
-            width: 3px;
-            height: 3px;
-            background: #31394E;
-        }*/
-        QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
-            background: none;
-        }
-    '''
-    def __init__(self, jsondata, parent=None):
-        super(DetailShow, self).__init__(parent)
-        self.parent = parent
-        self.setText(jsondata)
-        self.setReadOnly(True)
-        self.setStyleSheet(self.style)
-        self.installEventFilter(self)
-        self.setFocus()
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.RightButton:
-            pass
-        else:
-            super(DetailShow, self).mousePressEvent(event)
+        lastColumnWidth = 0
+        occupyWidth = 0
+        for col in range(self.columnCount() - 1):
+            occupyWidth += self.columnWidth(col)
+        lastColumnWidth = self.width() - occupyWidth - \
+            self.verticalScrollBar().width()
+        self.setColumnWidth(self.columnCount() - 1, lastColumnWidth)

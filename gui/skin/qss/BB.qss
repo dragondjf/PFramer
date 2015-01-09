@@ -246,7 +246,7 @@ QToolButton:open { /* when the button has its menu open */
 }
 /*******************QToolButton****************************/
 
-/*******************QLineEdit****************************/
+/*******************QLineEdit*****************************/
 QLineEdit{
     border: 2px solid transparent;
     font-size: 16px;
@@ -256,7 +256,17 @@ QLineEdit{
 QLineEdit:hover{
     border: 2px solid green;
 }
-/*******************QLineEdit****************************/
+/*******************QLineEdit*****************************/
+
+/*******************QTextEdit*****************************/
+QTextEdit{
+    color: white;
+    background-color:rgb(47, 54, 65);
+    font-size: 12px;
+    font-family: "Verdana";
+    border: none;
+}
+/*******************QTextEdit****************************/
 
 /*********************QTabBar******************************/
 QTabBar::tab {
@@ -554,3 +564,8 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
 }
 
 /*******************QScrollBar*****************************/
+
+
+QLabel#FTableItemDetailWidgetTitlebar{
+    background-color: rgb(40, 47, 63);
+}

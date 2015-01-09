@@ -221,6 +221,17 @@ QLineEdit:hover{
 /*******************QLineEdit****************************/
 
 
+/*******************QTextEdit*****************************/
+QTextEdit{
+    color: white;
+    background-color:rgb(47, 54, 65);
+    font-size: 12px;
+    font-family: "Verdana";
+    border: none;
+}
+/*******************QTextEdit****************************/
+
+
 /*******************QToolButton****************************/
 QToolButton{
     background-color: transparent;
@@ -558,3 +569,6 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
 }
 
 /*******************QScrollBar*****************************/
+QLabel#FTableItemDetailWidgetTitlebar{
+    background-color: rgb(40, 47, 63);
+}
