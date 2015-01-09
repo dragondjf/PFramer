@@ -3,9 +3,8 @@
 
 from qframer.qt.QtCore import *
 from qframer.qt.QtGui import *
-
+from qframer import views
 from gui.functionpages import LoginPage, AboutPage, ExitPage
-from qframer import views, collectView
 from database import signal_DB
 from log import logger
 

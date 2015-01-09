@@ -5,7 +5,6 @@ import os
 from qframer.qt.QtCore import *
 from qframer.qt.QtGui import *
 from qframer import views, collectView
-from qframer.animationwidget import FAnimationFrame
 
 
 class RPCEditPage(QFrame):

@@ -1,5 +1,4 @@
 import os
-from functools import partial
 from util.pluginbase import PluginBase
 
 plugin_base = PluginBase(package='RPCPlugins',

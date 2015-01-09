@@ -1,11 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
 from qframer.qt.QtCore import *
 from qframer.qt.QtGui import *
 from qframer.resources import *
-from qframer import views
 from qframer import FMenu
 
 

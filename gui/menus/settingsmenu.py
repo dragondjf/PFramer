@@ -1,10 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
 from qframer.resources import *
 from qframer import views
 from qframer import FMenu
+
 
 class SettingsMenu(FMenu):
 

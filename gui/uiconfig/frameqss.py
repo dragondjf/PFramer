@@ -1,7 +1,7 @@
 
 
 def makeFrameQss(color):
-    frameqss =  '''
+    frameqss = '''
         QFrame#CenterWindow{
             background-color: %s;
             border-left: 1px solid transparent;
@@ -9,7 +9,7 @@ def makeFrameQss(color):
             border-bottom: none;
             border-top: none;
         }
-    '''% (color)
+    ''' % (color)
     return frameqss
 
 frameqss = makeFrameQss('rgb(41, 153, 66)')

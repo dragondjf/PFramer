@@ -1,21 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
-
-try:
-    from qframer.QtCore import *
-    from qframer.QtGui import *
-    from qframer.QtWebKit import *
-except ImportError:
-    from PySide.QtCore import *
-    from PySide.QtGui import *
-    from PySide.QtWebKit import *
-
-from qframer import views, collectView
-from qframer import FWebkitBasePage
-
+from qframer.QtCore import *
+from qframer.QtGui import *
 from qframer.resources import *
+from qframer.QtWebKit import *
+
+from qframer import collectView
+from qframer import FWebkitBasePage
 
 
 class QWebToolBar(QToolBar):

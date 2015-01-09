@@ -1,9 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
-import json
-
 from qframer.qt.QtCore import *
 from qframer.qt.QtGui import *
 from qframer import views, collectView
@@ -11,13 +8,10 @@ from qframer import FMainWindow
 from qframer import FSuspensionWidget
 from qframer import FFloatWidget
 from qframer import setSkinForApp
-import qframer.dialogs as dialogs
-
 
 from gui.uiconfig import windowsoptions
 from gui.menus import SettingsMenu, SkinMenu
 from gui.floatwindows import LogWindow, HistoryWindow, InitHistoryWindow, FloatWindow
-from gui.functionpages import RPCEditPage
 from .guimanger import GuiManger
 
 

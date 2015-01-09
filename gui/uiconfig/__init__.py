@@ -29,7 +29,7 @@ logo_img_url = os.sep.join(['gui', 'skin', 'images', 'PFramer.png'])
 logo_title = u''
 
 from .dialogconfig import dialogsettings
-from .frameqss import frameqss, makeFrameQss
+from .frameqss import frameqss
 
 try:
     with open(os.sep.join([os.getcwd(), 'options', 'windowsoptions.json']), 'r') as f:
