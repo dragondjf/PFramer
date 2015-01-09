@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
 from .qt.QtCore import *
 from .qt.QtGui import *
 
