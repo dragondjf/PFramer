@@ -1,17 +1,23 @@
 PFramer
 =======
 
-###### 1. PFramer 兼容 PySide/PyQt4/PyQt5 同时兼容python27 与 python34
+##### 1. 什么是PFramer?
+PFramer是[QFramer](https://github.com/dragondjf/QFramer)的Python增强版本。
 
-###### 2. 在利用pyrcc 生成资源py文件后将相应的导入 更正为 
+##### 2. 特性:
 
-	from qframer.qt import QtCore
++ 兼容 PySide/PyQt4/PyQt5的各个版本
++ 兼容python2.7 和 python3.4
++ 完整的qss换肤机制
++ 可重用模块qframer,对Qt基础控件进行二次封装
 
-###### 3. 写程序注意python27与python34的兼容性问题
+##### 3. 预览
+![1](./doc/preview.png)
 
-###### 4. 同目录导入模块时使用【.a】
-	
-	from .a import b
-而不是
+参考第三方库：
 
-	from a import b
++ [QFramer](https://github.com/dragondjf/QFramer)
++ [pyqode.qt](https://github.com/pyQode/pyqode.qt)
++ [objbrowser](https://github.com/titusjan/objbrowser)
++ [pluginbase](https://github.com/mitsuhiko/pluginbase)
++ [QPFramer](https://github.com/dragondjf/QPFramer)
