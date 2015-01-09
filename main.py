@@ -4,14 +4,15 @@ import os
 import sys
 from qframer.qt.QtCore import *
 from qframer.qt.QtGui import *
+from qframer.qt import QtCore
 from qframer import FSplashScreen
 
 from gui import MainWindow
 from gui.uiconfig import windowsoptions
 
-from qframer.qt import QtCore
+from log import logger
 
-print('using %s(%s)' % (os.environ['QT_API'], QtCore.__version__))
+logger.info('using %s(%s)' % (os.environ['QT_API'], QtCore.__version__))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

@@ -20,7 +20,7 @@ class GuiManger(QObject):
         self.settingMenuActionConnect()
         self.createControllers()
         views['MainWindow'].titleBar().closed.connect(self.actionExit)
-
+        views['MainWindow'].floatWidget.titleBar.closed.connect(self.updateFloatMenu)
         # from .rpcapplication import rpcApp
 
         # for key, p in rpcApp.plugins.items():
@@ -77,7 +77,18 @@ class GuiManger(QObject):
 
     def actionFloat(self):
         sw = views['MainWindow'].floatWidget
-        sw.animationShow()
+        if sw.isVisible():
+            self.sender().setText('Show float window')
+            sw.animationHide()
+        else:
+            self.sender().setText('Hide float window')
+            sw.animationShow()
+            sw.isShowed = True
+
+    def updateFloatMenu(self):
+        action = views['MainWindow'].settingsMenu.getActionByName('Float')
+        if action:
+            action.setText('Show float window')
 
     def actionDock(self):
         dockwindows = views['MainWindow'].dockwindows

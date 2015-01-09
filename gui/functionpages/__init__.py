@@ -5,3 +5,4 @@ from .aboutpage import AboutPage
 from .loginpage import LoginPage
 from .exitpage import ExitPage
 from .rpceditpage import RPCEditPage
+from .floatpage import FloatPage

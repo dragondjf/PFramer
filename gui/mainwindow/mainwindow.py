@@ -6,12 +6,13 @@ from qframer.qt.QtGui import *
 from qframer import views, collectView
 from qframer import FMainWindow
 from qframer import FSuspensionWidget
-from qframer import FFloatWidget
 from qframer import setSkinForApp
 
 from gui.uiconfig import windowsoptions
 from gui.menus import SettingsMenu, SkinMenu
-from gui.floatwindows import LogWindow, HistoryWindow, InitHistoryWindow, FloatWindow
+from gui.floatwindows import LogWindow, HistoryWindow
+from gui.floatwindows import InitHistoryWindow, FloatWindow
+from gui.functionpages import FloatPage
 from .guimanger import GuiManger
 
 
@@ -45,10 +46,10 @@ class MainWindow(FMainWindow):
         self.suspensionWidget = FSuspensionWidget(
             'gui/skin/images/PFramer.png', self)
         self.suspensionWidget.setContextMenu(self.settingsMenu)
-        self.suspensionWidget.move(self.frameGeometry().topRight() + QPoint(20, 20))
+        self.suspensionWidget.move(self.frameGeometry().topRight()
+                                   + QPoint(20, 20))
 
-        self.floatWidget = FFloatWidget(self)
-        self.floatWidget.setObjectName("FloatWidget")
+        self.floatWidget = FloatPage(self)
 
     def initSize(self):
         mainwindow = windowsoptions['mainwindow']
@@ -87,14 +88,16 @@ class MainWindow(FMainWindow):
 
         # History
         self.historywindow = HistoryWindow(self)
-        self.historyfloatwindow = FloatWindow(self.historywindow, self.tr("Histroy"), self)
+        self.historyfloatwindow = FloatWindow(
+            self.historywindow, self.tr("Histroy"), self)
         self.addDockWidget(Qt.BottomDockWidgetArea, self.historyfloatwindow)
 
         # Init History
         self.initHistorywindow = InitHistoryWindow(parent=self)
-        self.initHistoryFloatwindow = FloatWindow(self.initHistorywindow, self.tr("Init"), self)
-        self.addDockWidget(Qt.BottomDockWidgetArea, self.initHistoryFloatwindow)
-
+        self.initHistoryFloatwindow = FloatWindow(
+            self.initHistorywindow, self.tr("Init"), self)
+        self.addDockWidget(
+            Qt.BottomDockWidgetArea, self.initHistoryFloatwindow)
 
         self.logfloatwindow.setFixedHeight(194)
         self.historyfloatwindow.setFixedHeight(194)
@@ -107,7 +110,8 @@ class MainWindow(FMainWindow):
             dock.hide()
 
         self.tabifyDockWidget(self.logfloatwindow, self.historyfloatwindow)
-        self.tabifyDockWidget(self.historyfloatwindow, self.initHistoryFloatwindow)
+        self.tabifyDockWidget(
+            self.historyfloatwindow, self.initHistoryFloatwindow)
 
         self.tabbar = self.findChildren(QTabBar)
         self.tabbar[0].setCurrentIndex(0)
@@ -125,7 +129,7 @@ class MainWindow(FMainWindow):
 
     def showEvent(self, event):
         super(MainWindow, self).showEvent(event)
-        if hasattr(self, 'floatWidget') and self.floatWidget:
+        if hasattr(self, 'floatWidget') and self.floatWidget.isShowed:
             self.floatWidget.show()
 
     def keyPressEvent(self, event):
@@ -147,7 +151,8 @@ class MainWindow(FMainWindow):
     def mouseMoveEvent(self, event):
         super(MainWindow, self).mouseMoveEvent(event)
         if hasattr(self, 'floatWidget') and self.floatWidget:
-            self.floatWidget.setGeometry(self.floatWidget.endRect)
+            if not self.floatWidget.isLocked():
+                self.floatWidget.setGeometry(self.floatWidget.endRect)
 
     # def closeEvent(self, evt):
     #     flag, exitflag = dialogs.exit(windowsoptions['exitdialog'])

@@ -62,3 +62,9 @@ class FMenu(QMenu):
         action.setShortcut(QKeySequence(menuaction['shortcut']))
         submenu.addAction(action)
         self.qactions.update({menuaction['trigger']: action})
+
+    def getActionByName(self, name):
+        if hasattr(self, '%sAction' % name):
+            return getattr(self, '%sAction' % name)
+        else:
+            return None

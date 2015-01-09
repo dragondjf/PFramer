@@ -70,9 +70,6 @@ class FTitleBar(QFrame):
     def initUI(self):
         self.setFixedHeight(baseHeight)
 
-        self.skinButton = BaseToolButton()
-        self.skinButton.setIcon(self.clothesIcon)
-
         self.lockButton = BaseToolButton()
         self.lockButton.setIcon(self.unlockIcon)
 
@@ -90,7 +87,6 @@ class FTitleBar(QFrame):
         mainLayout = QHBoxLayout()
         mainLayout.addStretch()
         mainLayout.addWidget(self.settingDownButton)
-        mainLayout.addWidget(self.skinButton)
         mainLayout.addWidget(self.pinButton)
         mainLayout.addWidget(self.lockButton)
         mainLayout.addWidget(self.closeButton)
@@ -99,7 +95,6 @@ class FTitleBar(QFrame):
         self.setLayout(mainLayout)
 
         self.settingDownButton.clicked.connect(self.settingMenuShowed)
-        self.skinButton.clicked.connect(self.skinMenuShowed)
         self.lockButton.clicked.connect(self.swithLockIcon)
         self.pinButton.clicked.connect(self.swithPinIcon)
         self.closeButton.clicked.connect(self.closed)
@@ -147,7 +142,6 @@ class FFloatWidget(FMoveableWidget):
     def _initUI(self):
         self.setFixedWidth(self.default_width)
         self.titleBar = FTitleBar(self)
-        self.titleBar
 
         mainLayout = QVBoxLayout()
         mainLayout.addWidget(self.titleBar)
@@ -158,7 +152,7 @@ class FFloatWidget(FMoveableWidget):
         self.setGeometry(self.endRect)
 
     def _initConnect(self):
-        self.titleBar.closed.connect(self.close)
+        self.titleBar.closed.connect(self.animationHide)
         self.titleBar.pined.connect(self.setFlags)
 
     @property
@@ -216,3 +210,12 @@ class FFloatWidget(FMoveableWidget):
         else:  
             self.setWindowFlags(Qt.WindowType_Mask | Qt.SubWindow | Qt.FramelessWindowHint)
             self.show()
+
+    def mouseMoveEvent(self, event):
+        if self.isLocked():
+            pass
+        else:
+            super(FFloatWidget, self).mouseMoveEvent(event)
+
+    def isLocked(self):
+        return self.titleBar.isLocked()
