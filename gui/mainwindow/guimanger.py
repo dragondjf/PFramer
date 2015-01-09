@@ -79,6 +79,16 @@ class GuiManger(QObject):
         sw = views['MainWindow'].floatWidget
         sw.animationShow()
 
+    def actionDock(self):
+        dockwindows = views['MainWindow'].dockwindows
+        for dock in dockwindows:
+            dock.setVisible(not dock.isVisible())
+
+        if dockwindows[0].isVisible():
+            self.sender().setText('Hide dock window')
+        else:
+            self.sender().setText('Show dock window')
+
     def actionAndroidDeveloper(self):
         logger.info("Android guide")
 

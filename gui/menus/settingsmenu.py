@@ -33,6 +33,12 @@ class SettingsMenu(FMenu):
                 'trigger': 'Float',
             },
             {
+                'name': self.tr('Show Dock window'),
+                'icon': u'',
+                'shortcut': u'',
+                'trigger': 'Dock',
+            },
+            {
                 'name': self.tr('Language'),
                 'trigger': 'Language',
                 'type': 'submenu',

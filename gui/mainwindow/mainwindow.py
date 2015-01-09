@@ -79,6 +79,7 @@ class MainWindow(FMainWindow):
         self.skinMenu.skinIDSin.connect(self.setskin)
 
     def initDockwindow(self):
+        self.dockwindows = []
         # Log
         self.logwindow = LogWindow(self)
         self.logfloatwindow = FloatWindow(self.logwindow, self.tr("Log"), self)
@@ -98,6 +99,12 @@ class MainWindow(FMainWindow):
         self.logfloatwindow.setFixedHeight(194)
         self.historyfloatwindow.setFixedHeight(194)
         self.initHistoryFloatwindow.setFixedHeight(194)
+
+        self.dockwindows.append(self.logfloatwindow)
+        self.dockwindows.append(self.historyfloatwindow)
+        self.dockwindows.append(self.initHistoryFloatwindow)
+        for dock in self.dockwindows:
+            dock.hide()
 
         self.tabifyDockWidget(self.logfloatwindow, self.historyfloatwindow)
         self.tabifyDockWidget(self.historyfloatwindow, self.initHistoryFloatwindow)

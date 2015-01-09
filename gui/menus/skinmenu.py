@@ -58,6 +58,34 @@ class SkinMenu(FMenu):
                 "checkable": True
             },
             {
+                'name': self.tr('Bg1'),
+                'icon': u'',
+                'shortcut': u'',
+                'trigger': 'Bg1',
+                "checkable": True
+            },
+            {
+                'name': self.tr('Bg2'),
+                'icon': u'',
+                'shortcut': u'',
+                'trigger': 'Bg2',
+                "checkable": True
+            },
+            {
+                'name': self.tr('Bg3'),
+                'icon': u'',
+                'shortcut': u'',
+                'trigger': 'Bg3',
+                "checkable": True
+            },
+            {
+                'name': self.tr('Bg4'),
+                'icon': u'',
+                'shortcut': u'',
+                'trigger': 'Bg4',
+                "checkable": True
+            },
+            {
                 'name': self.tr('Blank'),
                 'icon': u'',
                 'shortcut': u'',
