@@ -11,6 +11,11 @@ PFramer是[QFramer](https://github.com/dragondjf/QFramer)的Python增强版本�
 + 完整的qss换肤机制
 + 可重用模块qframer,对Qt基础控件进行二次封装
 
+#####3. 使用：
+直接运行main.y即可
+  
+      python main.py
+
 ##### 3. 预览
 ![1](./doc/preview.png)
 
