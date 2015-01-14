@@ -353,9 +353,15 @@ class MusicPlayer(QWidget):
             self.setTrackInfo("%s - %s" % (
                 self.player.metaData(QMediaMetaData.AlbumArtist),
                 self.player.metaData(QMediaMetaData.Title)))
-            print(self.player.metaData(QMediaMetaData.AlbumArtist))
             print(self.player.metaData(QMediaMetaData.Title))
-            print(self.player.metaData(QMediaMetaData.CoverArtUrlLarge))
+            print(self.player.metaData(QMediaMetaData.SubTitle))
+            print(self.player.metaData(QMediaMetaData.Author))
+            print(self.player.metaData(QMediaMetaData.AlbumArtist))
+            print(self.player.metaData(QMediaMetaData.Keywords))
+            
+            print(self.player.metaData(QMediaMetaData.Comment))
+            print(self.player.metaData(QMediaMetaData.Copyright))
+            print(self.player.metaData(QMediaMetaData.MediaType))
 
 
     def jump(self, index):
