@@ -23,5 +23,5 @@ class WebKitPage(FWebkitBasePage):
         pass
 
     def initUI(self):
-        url = QUrl("http://www.baidu.com")
+        url = QUrl("file://%s" % os.path.join(os.getcwd(), 'audiojs', 'index.html'))
         self.view.load(url)

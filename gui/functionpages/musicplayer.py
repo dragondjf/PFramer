@@ -311,7 +311,6 @@ class MusicPlayer(QWidget):
         for name in fileNames:
             fileInfo = QFileInfo(name)
             if fileInfo.exists():
-                print(type(fileInfo.absoluteFilePath()), fileInfo.absoluteFilePath())
                 url = QUrl.fromLocalFile(fileInfo.absoluteFilePath())
                 if fileInfo.suffix().lower() == 'm3u':
                     self.playlist.load(url)
@@ -342,7 +341,6 @@ class MusicPlayer(QWidget):
         if self.playlistView.currentIndex().row() == -1:
             self.playlist.previous()
 
-
     def positionChanged(self, progress):
         progress /= 1000
         if not self.slider.isSliderDown():
@@ -355,6 +353,10 @@ class MusicPlayer(QWidget):
             self.setTrackInfo("%s - %s" % (
                 self.player.metaData(QMediaMetaData.AlbumArtist),
                 self.player.metaData(QMediaMetaData.Title)))
+            print(self.player.metaData(QMediaMetaData.AlbumArtist))
+            print(self.player.metaData(QMediaMetaData.Title))
+            print(self.player.metaData(QMediaMetaData.CoverArtUrlLarge))
+
 
     def jump(self, index):
         if index.isValid():
