@@ -4,7 +4,6 @@
 
 import os
 import sys
-import platform
 from qframer.qt.QtCore import *
 from qframer.qt.QtGui import *
 from qframer.qt import QtCore
@@ -18,6 +17,7 @@ from log import logger
 logger.info('using %s(%s)' % (os.environ['QT_API'], QtCore.__version__))
 
 if __name__ == '__main__':
+    import platform
     if sys.platform == "linux2":
         QApplication.addLibraryPath(
             '/usr/lib/%s-linux-gnu/qt5/plugins/' % platform.machine())

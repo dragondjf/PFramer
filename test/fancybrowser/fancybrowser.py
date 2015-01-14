@@ -200,6 +200,10 @@ class MainWindow(QMainWindow):
 if __name__ == '__main__':
 
     import sys
+    import platform
+    if sys.platform == "linux2":
+        QApplication.addLibraryPath(
+            '/usr/lib/%s-linux-gnu/qt5/plugins/' % platform.machine())
 
     app = QApplication(sys.argv)
 

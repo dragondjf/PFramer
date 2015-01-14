@@ -6,3 +6,5 @@ from .loginpage import LoginPage
 from .exitpage import ExitPage
 from .rpceditpage import RPCEditPage
 from .floatpage import FloatPage
+from .webkitpage import WebKitPage
+from .musicplayer import MusicPlayer

@@ -12,7 +12,7 @@ from gui.uiconfig import windowsoptions
 from gui.menus import SettingsMenu, SkinMenu
 from gui.floatwindows import LogWindow, HistoryWindow
 from gui.floatwindows import InitHistoryWindow, FloatWindow
-from gui.functionpages import FloatPage
+from gui.functionpages import FloatPage, WebKitPage, MusicPlayer
 from .guimanger import GuiManger
 
 
@@ -23,6 +23,7 @@ class MainWindow(FMainWindow):
     @collectView
     def __init__(self):
         super(MainWindow, self).__init__()
+        # self.setAttribute(Qt.WA_TranslucentBackground, True)
         self.initUI()
         self.setskin()
         self.guimanger = GuiManger()
@@ -37,7 +38,17 @@ class MainWindow(FMainWindow):
         self.initMenus()
 
         self.initTitleBar()
-        self.setCentralWidget(QLabel(self))
+
+        self.webKitPage = WebKitPage(self)
+        self.musicPlayer = MusicPlayer([])
+
+        self.centerWidget = QFrame(self)
+        centerLayout = QVBoxLayout()
+        centerLayout.addWidget(self.webKitPage)
+        centerLayout.addWidget(self.musicPlayer)
+        self.centerWidget.setLayout(centerLayout)
+
+        self.setCentralWidget(self.centerWidget)
 
         self.initDockwindow()
 
@@ -50,6 +61,8 @@ class MainWindow(FMainWindow):
                                    + QPoint(20, 20))
 
         self.floatWidget = FloatPage(self)
+
+        self.statusBar().hide()
 
     def initSize(self):
         mainwindow = windowsoptions['mainwindow']
@@ -153,6 +166,45 @@ class MainWindow(FMainWindow):
         if hasattr(self, 'floatWidget') and self.floatWidget:
             if not self.floatWidget.isLocked():
                 self.floatWidget.setGeometry(self.floatWidget.endRect)
+
+    # def resizeEvent(self, event):
+    #     image = QImage(self.size(), QImage.Format_Mono)
+    #     image.fill(0)
+    #     image.setPixel(0, 0, 1)
+    #     image.setPixel(1, 0, 1)
+    #     image.setPixel(2, 0, 1)
+    #     image.setPixel(3, 0, 1)
+    #     image.setPixel(0, 1, 1)
+    #     image.setPixel(1, 1, 1)
+    #     image.setPixel(0, 2, 1)
+    #     image.setPixel(0, 3, 1)
+
+    #     image.setPixel(self.width() - 4, 0, 1) 
+    #     image.setPixel(self.width() - 3, 0, 1) 
+    #     image.setPixel(self.width() - 2, 0, 1) 
+    #     image.setPixel(self.width() - 1, 0, 1)                                                    
+    #     image.setPixel(self.width() - 2, 1, 1) 
+    #     image.setPixel(self.width() - 1, 1, 1)
+    #     image.setPixel(self.width() - 1, 2, 1)
+    #     image.setPixel(self.width() - 1, 3, 1)
+
+    #     image.setPixel(0, self.height() - 4, 1)
+    #     image.setPixel(0, self.height() - 3, 1)
+    #     image.setPixel(0, self.height() - 2, 1) 
+    #     image.setPixel(1, self.height() - 2, 1)
+    #     image.setPixel(0, self.height() - 1, 1) 
+    #     image.setPixel(1, self.height() - 1, 1) 
+    #     image.setPixel(2, self.height() - 1, 1) 
+    #     image.setPixel(3, self.height() - 1, 1)
+
+    #     image.setPixel(self.width() - 1, self.height() - 3, 1)                                                               
+    #     image.setPixel(self.width() - 2, self.height() - 2, 1)
+    #     image.setPixel(self.width() - 1, self.height() - 2, 1)
+    #     image.setPixel(self.width() - 4, self.height() - 1, 1)
+    #     image.setPixel(self.width() - 3, self.height() - 1, 1) 
+    #     image.setPixel(self.width() - 2, self.height() - 1, 1) 
+    #     image.setPixel(self.width() - 1, self.height() - 1, 1)
+    #     self.setMask(QBitmap.fromImage(image))
 
     # def closeEvent(self, evt):
     #     flag, exitflag = dialogs.exit(windowsoptions['exitdialog'])
