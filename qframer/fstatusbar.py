@@ -12,8 +12,10 @@ class FStatusBar(QStatusBar):
         super(FStatusBar, self).__init__(parent)
         self.parent = parent
         self.initStatusbar()
-        self.initUI()
+        # self.initUI()
         # self.startTimer(1000)
+
+    def startTimer(self, interval):
         self.timer = QTimer()
         self.timer.setInterval(1000)
         self.timer.timeout.connect(self.updateDataLabel)

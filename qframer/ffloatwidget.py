@@ -4,18 +4,7 @@
 from .qt.QtCore import *
 from .qt.QtGui import *
 from .fmoveablewidget import FMoveableWidget
-
-baseHeight = 25
-
-
-class BaseToolButton(QToolButton):
-
-    def __init__(self, parent=None):
-        super(BaseToolButton, self).__init__(parent)
-        self.setFocusPolicy(Qt.NoFocus)
-        iconBaseSize = QSize(baseHeight, baseHeight)
-        self.setIconSize(iconBaseSize)
-        self.setFixedSize(30, baseHeight)
+from .ftitlebar import BaseToolButton, baseHeight
 
 
 class FTitleBar(QFrame):
@@ -47,7 +36,6 @@ class FTitleBar(QFrame):
             background-color: transparent;
         }
     '''
-
 
     def __init__(self, parent=None):
         super(FTitleBar, self).__init__(parent)
@@ -132,7 +120,8 @@ class FFloatWidget(FMoveableWidget):
     def __init__(self, parent=None):
         super(FFloatWidget, self).__init__()
         self.parent = parent
-        self.setWindowFlags(Qt.WindowType_Mask | Qt.SubWindow | Qt.FramelessWindowHint)
+        self.setWindowFlags(
+            Qt.WindowType_Mask | Qt.SubWindow | Qt.FramelessWindowHint)
 
         self._initShowAnimation()
         self._initHideAnimation()
@@ -205,10 +194,13 @@ class FFloatWidget(FMoveableWidget):
 
     def setFlags(self, flag):
         if flag:
-            self.setWindowFlags(Qt.WindowType_Mask| Qt.SubWindow | Qt.WindowStaysOnTopHint| Qt.FramelessWindowHint)
+            self.setWindowFlags(
+                Qt.WindowType_Mask | Qt.SubWindow |
+                Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
             self.show()
-        else:  
-            self.setWindowFlags(Qt.WindowType_Mask | Qt.SubWindow | Qt.FramelessWindowHint)
+        else:
+            self.setWindowFlags(
+                Qt.WindowType_Mask | Qt.SubWindow | Qt.FramelessWindowHint)
             self.show()
 
     def mouseMoveEvent(self, event):

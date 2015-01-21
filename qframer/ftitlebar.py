@@ -18,6 +18,16 @@ class BaseToolButton(QToolButton):
         self.setIconSize(iconBaseSize)
         self.setFixedSize(30, baseHeight)
 
+    def setMenu(self, menu):
+        super(BaseToolButton, self).setMenu(menu)
+        menu.aboutToHide.connect(self.recover)
+
+    def recover(self):
+        import sys
+        if sys.platform == "linux2":
+            self.setAttribute(Qt.WA_UnderMouse, self.rect().contains(self.mapFromGlobal(QCursor.pos())))
+            self.update()
+
 
 class FTitleBar(QFrame):
 

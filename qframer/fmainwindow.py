@@ -26,6 +26,8 @@ class FMainWindow(QMainWindow):
 
         self._initSystemTray()
 
+        self.rightClick = False
+
     def _initFlags(self):
         self._framelessflag = True  # 无系统边框标志
         self._customTitlebarFlag = True  # 自定义标题栏标志
@@ -46,9 +48,7 @@ class FMainWindow(QMainWindow):
         if framelessflag:
             # 无边框， 带系统菜单， 可以最小化
             self.setWindowFlags(
-                Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint)
-        else:
-            self.setWindowFlags(Qt.CustomizeWindowHint)
+                Qt.FramelessWindowHint)
         self._framelessflag = framelessflag
 
     def _initMainWindow(self):
@@ -204,13 +204,29 @@ class FMainWindow(QMainWindow):
                 self.frameGeometry().topLeft()
             event.accept()
 
+        if event.button() == Qt.RightButton:
+            self.rdragx = event.x()
+            self.rdragy = event.y()        
+            self.currentx = self.width()
+            self.currenty = self.height()
+            self.rightClick = True
+            self.setCursor(Qt.SizeFDiagCursor)
+
     def mouseReleaseEvent(self, event):
         # 鼠标释放事件
         if hasattr(self, "dragPosition"):
             del self.dragPosition
+            self.rightClick = False
+            self.setCursor(Qt.ArrowCursor)
 
     def mouseMoveEvent(self, event):
         self.oldPosition = self.pos()
+        if self.rightClick == True:
+            x = max(self.minimumWidth(), 
+                    self.currentx + event.x() - self.rdragx)
+            y = max(self.minimumHeight(), 
+                    self.currenty + event.y() - self.rdragy)
+            self.resize(x, y)
         # 鼠标移动事件
         if self.isMaximized():
             event.ignore()
