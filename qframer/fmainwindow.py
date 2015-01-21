@@ -26,7 +26,13 @@ class FMainWindow(QMainWindow):
 
         self._initSystemTray()
 
-        self.rightClick = False
+        self.setAttribute(Qt.WA_Hover)
+        self.installEventFilter(self)
+
+        self.isSideClicked = False
+        self.isCusorLeftSide = False
+        self.isCusorRightSide = False
+        self.isCusorDownSide = False
 
     def _initFlags(self):
         self._framelessflag = True  # 无系统边框标志
@@ -204,35 +210,66 @@ class FMainWindow(QMainWindow):
                 self.frameGeometry().topLeft()
             event.accept()
 
-        if event.button() == Qt.RightButton:
-            self.rdragx = event.x()
-            self.rdragy = event.y()        
-            self.currentx = self.width()
-            self.currenty = self.height()
-            self.rightClick = True
-            self.setCursor(Qt.SizeFDiagCursor)
+        self.xPos = self.x()
+        self.yPos = self.y()
+        self.rdragx = event.x()
+        self.rdragy = event.y()
+        self.currentWidth = self.width()
+        self.currentHeight = self.height()
+        self.isSideClicked = True
 
     def mouseReleaseEvent(self, event):
         # 鼠标释放事件
         if hasattr(self, "dragPosition"):
             del self.dragPosition
-            self.rightClick = False
+            self.isSideClicked = False
             self.setCursor(Qt.ArrowCursor)
 
     def mouseMoveEvent(self, event):
         self.oldPosition = self.pos()
-        if self.rightClick == True:
-            x = max(self.minimumWidth(), 
-                    self.currentx + event.x() - self.rdragx)
-            y = max(self.minimumHeight(), 
-                    self.currenty + event.y() - self.rdragy)
-            self.resize(x, y)
-        # 鼠标移动事件
-        if self.isMaximized():
-            event.ignore()
+        if self.isSideClicked and self.isCusorRightSide:
+            w = max(self.minimumWidth(),
+                    self.currentWidth + event.x() - self.rdragx)
+            h = self.currentHeight
+            self.resize(w, h)
+        elif self.isSideClicked and self.isCusorDownSide:
+            w = self.currentWidth
+            h = max(self.minimumHeight(),
+                    self.currentHeight + event.y() - self.rdragy)
+            self.resize(w, h)
+        elif self.isSideClicked and self.isCusorLeftSide:
+            x = event.x() + self.xPos - self.rdragx
+            w = max(self.minimumWidth(),
+                    self.xPos + self.currentWidth - x)
+            self.move(x , self.yPos)
+            self.resize(w, self.currentHeight)
         else:
-            if not self.isLocked():
-                if hasattr(self, "dragPosition"):
-                    if event.buttons() == Qt.LeftButton:
-                        self.move(event.globalPos() - self.dragPosition)
-                        event.accept()
+            # 鼠标移动事件
+            if self.isMaximized():
+                event.ignore()
+            else:
+                if not self.isLocked():
+                    if hasattr(self, "dragPosition"):
+                        if event.buttons() == Qt.LeftButton:
+                            self.move(
+                                event.globalPos() - self.dragPosition)
+                            event.accept()
+
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.HoverMove:
+            if self.width() - event.pos().x() < 5:
+                self.setCursor(Qt.SizeHorCursor)
+                self.isCusorRightSide = True
+            elif self.height() - event.pos().y() < 5:
+                self.setCursor(Qt.SizeVerCursor)
+                self.isCusorDownSide = True
+            elif event.pos().x() < 5:
+                self.setCursor(Qt.SizeHorCursor)
+                self.isCusorLeftSide = True
+            elif not self.isSideClicked:
+                self.setCursor(Qt.ArrowCursor)
+                self.isCusorLeftSide = False
+                self.isCusorRightSide = False
+                self.isCusorDownSide = False
+            return True
+        return super(FMainWindow, self).eventFilter(obj, event)
