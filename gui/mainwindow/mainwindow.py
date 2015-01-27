@@ -41,6 +41,8 @@ class MainWindow(FMainWindow):
 
         self.initDockwindow()
 
+        self.initSizeGrip()
+
         self.setSystemTrayMenu(self.settingsMenu)
 
         self.suspensionWidget = FSuspensionWidget(
@@ -116,6 +118,10 @@ class MainWindow(FMainWindow):
         self.tabbar = self.findChildren(QTabBar)
         self.tabbar[0].setCurrentIndex(0)
 
+    def initSizeGrip(self):
+        self.sizeGrip = QSizeGrip(self)
+        self.sizeGrip.hide()
+
     def setskin(self, skinID="BB"):
         setSkinForApp('gui/skin/qss/%s.qss' % skinID)  # 设置主窗口样式
 
@@ -143,10 +149,16 @@ class MainWindow(FMainWindow):
         elif event.key() == Qt.Key_F8:
             bar = self.statusBar()
             bar.setVisible(not bar.isVisible())
+            self.sizeGrip.setVisible(not bar.isVisible())
         elif event.key() == Qt.Key_F12:
             self.guimanger.actionObjectView()
         else:
             super(MainWindow, self).keyPressEvent(event)
+
+    def resizeEvent(self, event):
+        super(MainWindow, self).resizeEvent(event)
+        self.sizeGrip.move(
+            self.size().width() - 100, self.size().height() - 30)
 
     def mouseMoveEvent(self, event):
         super(MainWindow, self).mouseMoveEvent(event)

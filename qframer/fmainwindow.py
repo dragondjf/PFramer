@@ -237,12 +237,12 @@ class FMainWindow(QMainWindow):
             h = max(self.minimumHeight(),
                     self.currentHeight + event.y() - self.rdragy)
             self.resize(w, h)
-        elif self.isSideClicked and self.isCusorLeftSide:
-            x = event.x() + self.xPos - self.rdragx
-            w = max(self.minimumWidth(),
-                    self.xPos + self.currentWidth - x)
-            self.move(x , self.yPos)
-            self.resize(w, self.currentHeight)
+        # elif self.isSideClicked and self.isCusorLeftSide:
+        #     x = event.x() + self.xPos - self.rdragx
+        #     w = max(self.minimumWidth(),
+        #             self.xPos + self.currentWidth - x)
+        #     self.move(x , self.yPos)
+        #     self.resize(w, self.currentHeight)
         else:
             # 鼠标移动事件
             if self.isMaximized():
@@ -263,9 +263,9 @@ class FMainWindow(QMainWindow):
             elif self.height() - event.pos().y() < 5:
                 self.setCursor(Qt.SizeVerCursor)
                 self.isCusorDownSide = True
-            elif event.pos().x() < 5:
-                self.setCursor(Qt.SizeHorCursor)
-                self.isCusorLeftSide = True
+            # elif event.pos().x() < 5:
+            #     self.setCursor(Qt.SizeHorCursor)
+            #     self.isCusorLeftSide = True
             elif not self.isSideClicked:
                 self.setCursor(Qt.ArrowCursor)
                 self.isCusorLeftSide = False

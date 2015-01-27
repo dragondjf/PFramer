@@ -307,7 +307,7 @@ class TreeModel(QtCore.QAbstractItemModel):
         """ Empties and re-populates the tree.
         """
         self.beginResetModel()
-        self.reset()
+        # self.reset()
         self.root_item = self.populateTree(self._root_obj, self._root_name,
                                            self.show_root_node)
         self.endResetModel()
