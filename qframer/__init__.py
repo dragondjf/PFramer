@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from .futil import views, collectView, setSkinForApp
-from .fsingleapplication import QtSingleApplication
+from .fsingleapplication import QSingleApplication
 from .fmenu import FMenu
 from .fmenubar import FMenuBar
 from .ftitlebar import FTitleBar

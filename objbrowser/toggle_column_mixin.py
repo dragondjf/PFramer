@@ -3,8 +3,8 @@
 from __future__ import print_function
 
 import logging
-from qframer.qt import QtCore, QtGui
-from qframer.qt.QtCore import Qt
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtCore import Qt
 
 logger = logging.getLogger(__name__)
 

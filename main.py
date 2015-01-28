@@ -9,7 +9,7 @@ import platform
 from qframer.qt.QtCore import *
 from qframer.qt.QtGui import *
 from qframer.qt import QtCore
-from qframer import FSplashScreen, QtSingleApplication
+from qframer import FSplashScreen, QSingleApplication
 
 from gui import MainWindow
 from gui.uiconfig import windowsoptions
@@ -26,8 +26,12 @@ if __name__ == '__main__':
         else:
             QApplication.addLibraryPath(
                 '/usr/lib/%s-linux-gnu/qt5/plugins/' % platform.machine())
-    guid = 'org.djf'
-    app = QtSingleApplication(guid, sys.argv)
+    applicationName = 'PFramer'
+    app = QSingleApplication(applicationName, sys.argv)
+
+    app.setApplicationVersion("1.0")
+    app.setOrganizationName("dragondjf.github.io")
+    app.setApplicationName(applicationName)
 
     if app.isRunning():
         sys.exit(0)
@@ -47,6 +51,3 @@ if __name__ == '__main__':
 
     exitCode = app.exec_()
     sys.exit(exitCode)
-    if app.server():
-        app.server().removeServer(guid)
-        app.server().close()
