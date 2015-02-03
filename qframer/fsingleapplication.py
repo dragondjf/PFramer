@@ -9,7 +9,7 @@ from .qt.QtNetwork import *
 
 class QSingleApplication(QApplication):
 
-    messageReceived = Signal(unicode)
+    messageReceived = Signal(str)
 
     def __init__(self, id, *argv):
 
