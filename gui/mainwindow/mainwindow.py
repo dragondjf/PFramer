@@ -12,7 +12,7 @@ from gui.uiconfig import windowsoptions
 from gui.menus import SettingsMenu, SkinMenu
 from gui.floatwindows import LogWindow, HistoryWindow
 from gui.floatwindows import InitHistoryWindow, FloatWindow
-from gui.functionpages import FloatPage, ScrollWidget
+from gui.functionpages import FloatPage, ScrollWidget, TablePage
 from .guimanger import GuiManger
 
 
@@ -37,7 +37,7 @@ class MainWindow(FMainWindow):
         self.initMenus()
 
         self.initTitleBar()
-        self.setCentralWidget(ScrollWidget(self))
+        self.setCentralWidget(TablePage(self))
 
         self.initDockwindow()
 
