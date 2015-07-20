@@ -21,25 +21,36 @@ class TablePage(QTableWidget):
         border: none;
         background-color: gray;
     }
-
-
     '''
+
+    viewRowChanged = pyqtSignal(int)
 
     def __init__(self, parent=None):
         super(TablePage, self).__init__(parent)
         self.setObjectName("DTableWidget")
-        self.setShowGrid(False)
+        self.setShowGrid(True)
         self.horizontalHeader().hide()
+        self.verticalHeader().hide()
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
         self.SelectionMode(QAbstractItemView.NoSelection)
         self.setDragDropMode(QAbstractItemView.NoDragDrop)
         self.setVerticalScrollMode(QAbstractItemView.ScrollPerItem)
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setFrameShape(QFrame.NoFrame)
         self.setMouseTracking(True)
-        self.verticalScrollBar().hide()
+        
         self.setColumnCount(10)
         self.setRowCount(50)
+
+        verticalScrollBar = QScrollBar()
+        verticalScrollBar.setPageStep(0)
+        verticalScrollBar.setSingleStep(0)
+        self.setVerticalScrollBar(verticalScrollBar)
+
+        # self.verticalScrollBar().setPageStep(1)
+        # self.verticalScrollBar().setSingleStep(1)
 
         for i in range(self.rowCount()):
            self.setRowHeight(i, 100)
@@ -54,18 +65,30 @@ class TablePage(QTableWidget):
 
         self.setSpan(10, 0, 1, self.columnCount())
 
-        # self.scrollTo(10)
-        self.setCurrentCell(20, 0)
-
         self.setStyleSheet(self.style)
 
         self.initConnect()
-
     
     def initConnect(self):
-        self.cellEntered.connect(self.changeHover)
+        self.verticalScrollBar().valueChanged.connect(self.changeSilderValue)
 
-    def changeHover(self, row, column):
-        print(row, column)
+    def changeSilderValue(self, value):
+        self.viewRowChanged.emit(value)
+        print value
 
+    def scrollToRow(self, row):
+        self.verticalScrollBar().setValue(row)
 
+    def wheelEvent(self, event):
+        value = self.verticalScrollBar().value()
+        miniimun = self.verticalScrollBar().minimum()
+        maximum = self.verticalScrollBar().maximum()
+
+        if event.angleDelta().y() > 0:
+            if value >= miniimun:
+                self.verticalScrollBar().setValue(value - 1)
+        else:
+            if value < maximum:
+                self.verticalScrollBar().setValue(value + 1)
+
+        # super(TablePage, self).wheelEvent(event)
