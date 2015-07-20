@@ -44,14 +44,6 @@ class TablePage(QTableWidget):
         self.setColumnCount(10)
         self.setRowCount(50)
 
-        verticalScrollBar = QScrollBar()
-        verticalScrollBar.setPageStep(0)
-        verticalScrollBar.setSingleStep(0)
-        self.setVerticalScrollBar(verticalScrollBar)
-
-        # self.verticalScrollBar().setPageStep(1)
-        # self.verticalScrollBar().setSingleStep(1)
-
         for i in range(self.rowCount()):
            self.setRowHeight(i, 100)
 
@@ -68,6 +60,8 @@ class TablePage(QTableWidget):
         self.setStyleSheet(self.style)
 
         self.initConnect()
+
+        self.scrollToRow(3)
     
     def initConnect(self):
         self.verticalScrollBar().valueChanged.connect(self.changeSilderValue)
@@ -90,5 +84,3 @@ class TablePage(QTableWidget):
         else:
             if value < maximum:
                 self.verticalScrollBar().setValue(value + 1)
-
-        # super(TablePage, self).wheelEvent(event)
