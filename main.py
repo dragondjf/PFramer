@@ -49,5 +49,8 @@ if __name__ == '__main__':
     mainwindow.guimanger.globals = globals()
     mainwindow.guimanger.locals = locals()
 
+    print(app.desktop().availableGeometry())
+    mainwindow.setGeometry(app.desktop().screen().geometry())
+
     exitCode = app.exec_()
     sys.exit(exitCode)

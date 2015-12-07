@@ -68,14 +68,14 @@ class FAnimationFrame(QFrame):
             return None
 
     def _initShowAnimation(self):
-        self.showanimation = QPropertyAnimation(self, 'geometry')
+        self.showanimation = QPropertyAnimation(self, ('geometry').encode('utf-8'))
         self.showanimation.setStartValue(self.startRect)
         self.showanimation.setEndValue(self.endRect)
         self.showanimation.setDuration(200)
         self.showanimation.setEasingCurve(QEasingCurve.OutCubic)
 
     def _initHideAnimation(self):
-        self.hideanimation = QPropertyAnimation(self, 'geometry')
+        self.hideanimation = QPropertyAnimation(self, ('geometry').encode('utf-8'))
         self.hideanimation.setStartValue(self.endRect)
         self.hideanimation.setEndValue(self.startRect)
         self.hideanimation.setDuration(200)

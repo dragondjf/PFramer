@@ -34,15 +34,15 @@ class TablePage(QTableWidget):
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
         self.SelectionMode(QAbstractItemView.NoSelection)
         self.setDragDropMode(QAbstractItemView.NoDragDrop)
-        self.setVerticalScrollMode(QAbstractItemView.ScrollPerItem)
+        self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setFrameShape(QFrame.NoFrame)
         self.setMouseTracking(True)
         
         self.setColumnCount(10)
-        self.setRowCount(50)
+        self.setRowCount(10)
 
         for i in range(self.rowCount()):
            self.setRowHeight(i, 100)
@@ -59,19 +59,19 @@ class TablePage(QTableWidget):
 
         self.setStyleSheet(self.style)
 
-        self.initConnect()
+        # self.initConnect()
 
-        self.scrollToRow(3)
+        # self.scrollToRow(3)
     
-    def initConnect(self):
-        self.verticalScrollBar().valueChanged.connect(self.changeSilderValue)
+    # def initConnect(self):
+    #     self.verticalScrollBar().valueChanged.connect(self.changeSilderValue)
 
-    def changeSilderValue(self, value):
-        self.viewRowChanged.emit(value)
-        print value
+    # def changeSilderValue(self, value):
+    #     self.viewRowChanged.emit(value)
+    #     print value
 
-    def scrollToRow(self, row):
-        self.verticalScrollBar().setValue(row)
+    # def scrollToRow(self, row):
+    #     self.verticalScrollBar().setValue(row)
 
     def wheelEvent(self, event):
         value = self.verticalScrollBar().value()
@@ -80,7 +80,7 @@ class TablePage(QTableWidget):
 
         if event.angleDelta().y() > 0:
             if value >= miniimun:
-                self.verticalScrollBar().setValue(value - 1)
+                self.verticalScrollBar().setValue(value - 10)
         else:
             if value < maximum:
-                self.verticalScrollBar().setValue(value + 1)
+                self.verticalScrollBar().setValue(value + 10)

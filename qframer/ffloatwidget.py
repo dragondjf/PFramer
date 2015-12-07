@@ -171,14 +171,14 @@ class FFloatWidget(FMoveableWidget):
         return self.width()
 
     def _initShowAnimation(self):
-        self.showanimation = QPropertyAnimation(self, 'windowOpacity')
+        self.showanimation = QPropertyAnimation(self, ('windowOpacity').encode('utf-8'))
         self.showanimation.setStartValue(0)
         self.showanimation.setEndValue(1)
         self.showanimation.setDuration(1000)
         self.showanimation.setEasingCurve(QEasingCurve.OutCubic)
 
     def _initHideAnimation(self):
-        self.hideanimation = QPropertyAnimation(self, 'windowOpacity')
+        self.hideanimation = QPropertyAnimation(self, ('windowOpacity').encode('utf-8'))
         self.hideanimation.setStartValue(1)
         self.hideanimation.setEndValue(0)
         self.hideanimation.setDuration(1000)
