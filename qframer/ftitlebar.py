@@ -9,10 +9,11 @@ from .resources import *
 baseHeight = 25
 
 
-class BaseToolButton(QToolButton):
+class BaseToolButton(QPushButton):
 
     def __init__(self, parent=None):
         super(BaseToolButton, self).__init__(parent)
+        self.setObjectName("BaseToolButton")
         self.setFocusPolicy(Qt.NoFocus)
         iconBaseSize = QSize(baseHeight, baseHeight)
         self.setIconSize(iconBaseSize)
@@ -41,22 +42,22 @@ class FTitleBar(QFrame):
     closed = Signal()
 
     closestyle = '''
-        QToolButton#close{
+        QPushButton#close{
             background-color: transparent;
             color: white;
         }
 
-        QToolButton#close:hover{
+        QPushButton#close:hover{
             background-color: red;
             border: 1px;
         }
     '''
 
     logostyle = '''
-        QToolButton#logo{
+        QPushButton#logo{
             background-color: transparent;
         }
-        QToolButton#logo:hover{
+        QPushButton#logo:hover{
             background-color: transparent;
         }
     '''

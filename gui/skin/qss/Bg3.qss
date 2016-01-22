@@ -207,44 +207,44 @@ QLabel{
 /********************QLabel********************************/
 
 
-/*******************QToolButton****************************/
-QToolButton{
+/*******************QPushButton#BaseToolButton****************************/
+QPushButton#BaseToolButton{
     background-color: transparent;
     color: rgb(92, 113, 134);
 }
 
 
-QToolButton:hover{
+QPushButton#BaseToolButton:hover{
     background-color: rgb(69, 187, 217);
     color: white;
     border: 1px;
 }
 
-QToolButton:disabled{
+QPushButton#BaseToolButton:disabled{
     background-color: gray;
     border: 1px;
 }
 
-QToolButton[popupMode="1"] { /* only for MenuButtonPopup */
+QPushButton#BaseToolButton[popupMode="1"] { /* only for MenuButtonPopup */
     padding-right: 0px; /* make way for the popup button */
 }
 
-QToolButton::menu-button {
+QPushButton#BaseToolButton::menu-button {
     border: none;
 }
 
-QToolButton::menu-arrow {
+QPushButton#BaseToolButton::menu-arrow {
     image: none;
 }
 
-QToolButton::menu-indicator {
+QPushButton#BaseToolButton::menu-indicator {
     image: none;
 }
 
-QToolButton:open { /* when the button has its menu open */
+QPushButton#BaseToolButton:open { /* when the button has its menu open */
     background-color: rgb(63, 147, 168);
 }
-/*******************QToolButton****************************/
+/*******************QPushButton#BaseToolButton****************************/
 
 /*******************QLineEdit*****************************/
 QLineEdit{
