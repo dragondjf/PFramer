@@ -54,7 +54,7 @@ Qt官方推荐的3种开发模式：
 + 第四部分：高级编程部分的4个章节算的上是介绍高级概念，还缺少对Qt的多媒体、Qt的动画框架、PyQt对静态资源文件的处理、PyQt的程序如何打包发布（Py2exe, cx_Freeze, PyInstaller，py2app)
 
 
-如果是PyQt4的年代，这本书能及时翻译出来，可能会帮助更多的新手入门PyQt, 但是如今依然是PyQt5的年代：
+如果是PyQt4的年代，这本书能及时翻译出来，可能会帮助更多的新手入门PyQt, 但是如今依然是PySide2的年代：
 
 + Qt5的当下和未来的重点在Qt Quick技术上（Qt推出的一种类json的陈述性语言qml），Qt Quick技术理应当介绍。
 + Qt5.4已经将chromium内核移植到Qt的QtWebengine模块中，未来将逐步替代掉原先的QtWebkit, 2015年是Qt官方对webkit支持的最后一年；

@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from .qt.QtCore import *
-from .qt.QtGui import *
-from .qt.QtNetwork import *
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
+from PySide2.QtNetwork import *
 
 
 class QSingleApplication(QApplication):

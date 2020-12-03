@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 import os
 
-from qframer.qt.QtCore import *
-from qframer.qt.QtGui import *
+from PySide2.QtCore import *
+from PySide2.QtGui import *
 
 def set_skin(widget, qssfile):
     if os.path.exists(qssfile):

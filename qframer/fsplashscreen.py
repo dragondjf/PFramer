@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import time
-from .qt.QtCore import *
-from .qt.QtGui import *
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
 
 
 class FSplashScreen(QSplashScreen):

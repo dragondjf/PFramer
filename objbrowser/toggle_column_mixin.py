@@ -3,8 +3,11 @@
 from __future__ import print_function
 
 import logging
-from PyQt5 import QtCore, QtGui
-from PyQt5.QtCore import Qt
+
+from objbrowser.qtpy import QtCore, QtWidgets
+from objbrowser.qtpy.QtCore import Qt
+
+from objbrowser.app import get_qsettings
 
 logger = logging.getLogger(__name__)
 
@@ -34,14 +37,14 @@ class ToggleColumnMixIn(object):
         horizontal_header = self._horizontal_header()
         horizontal_header.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
 
-        self.toggle_column_actions_group = QtGui.QActionGroup(self)
+        self.toggle_column_actions_group = QtWidgets.QActionGroup(self)
         self.toggle_column_actions_group.setExclusive(False)
         self.__toggle_functions = []  # for keeping references
         
         for col in range(horizontal_header.count()):
             column_label = self.model().headerData(col, Qt.Horizontal, Qt.DisplayRole)
             logger.debug("Adding: col {}: {}".format(col, column_label))            
-            action = QtGui.QAction("Show {} column".format(column_label), 
+            action = QtWidgets.QAction(str(column_label),
                                    self.toggle_column_actions_group, 
                                    checkable = checkable.get(column_label, True), 
                                    enabled = enabled.get(column_label, True), 
@@ -85,16 +88,19 @@ class ToggleColumnMixIn(object):
         header_restored = False
         if not reset:
             if settings is None:
-                settings = QtCore.QSettings()
+                settings = get_qsettings()
             horizontal_header = self._horizontal_header()
-            header_restored = horizontal_header.restoreState(settings.value(key))
+            header_data = settings.value(key)
+            if header_data:
+                header_restored = horizontal_header.restoreState(header_data)
             
             # update actions
             for col, action in enumerate(horizontal_header.actions()):
                 is_checked = not horizontal_header.isSectionHidden(col)
                 action.setChecked(is_checked)
-                
+        
         return header_restored
+
 
     def write_view_settings(self, key, settings=None):
         """ Writes the view settings to the persistent store
@@ -102,19 +108,19 @@ class ToggleColumnMixIn(object):
         logger.debug("Writing view settings for: {}".format(key))
         
         if settings is None:
-            settings = QtCore.QSettings()
+            settings = get_qsettings()
         settings.setValue(key, self._horizontal_header().saveState())
 
 
 
-class ToggleColumnTableWidget(QtGui.QTableWidget, ToggleColumnMixIn):
+class ToggleColumnTableWidget(QtWidgets.QTableWidget, ToggleColumnMixIn):
     """ A QTableWidget where right clicking on the header allows the user to show/hide columns
     """
     pass
 
         
         
-class ToggleColumnTreeWidget(QtGui.QTreeWidget, ToggleColumnMixIn):
+class ToggleColumnTreeWidget(QtWidgets.QTreeWidget, ToggleColumnMixIn):
     """ A QTreeWidget where right clicking on the header allows the user to show/hide columns
     """
     def _horizontal_header(self):
@@ -126,7 +132,7 @@ class ToggleColumnTreeWidget(QtGui.QTreeWidget, ToggleColumnMixIn):
     
         
         
-class ToggleColumnTreeView(QtGui.QTreeView, ToggleColumnMixIn):
+class ToggleColumnTreeView(QtWidgets.QTreeView, ToggleColumnMixIn):
     """ A QTreeView where right clicking on the header allows the user to show/hide columns
     """
     def _horizontal_header(self):

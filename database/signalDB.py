@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from qframer.qt.QtCore import *
+from PySide2.QtCore import *
 
 
 class SignalDB(QObject):

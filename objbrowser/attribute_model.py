@@ -4,10 +4,10 @@ from __future__ import absolute_import
 
 __all__ = ['browse', 'execute', 'create_object_browser', 'logging_basic_config']
 
-from qframer.qt.QtCore import Qt
-from qframer.qt.QtGui import QTextOption
+from objbrowser.qtpy.QtCore import Qt
+from objbrowser.qtpy.QtGui import QTextOption
 
-import logging, inspect, string, pprint
+import logging, inspect, string, pprint, six
 
 try:
     import numpy as np
@@ -31,6 +31,11 @@ _ALL_PREDICATES = (inspect.ismodule, inspect.isclass, inspect.ismethod,
                    inspect.ismethoddescriptor, inspect.isdatadescriptor, 
                    inspect.isgetsetdescriptor, inspect.ismemberdescriptor) 
 
+# The cast to int is necessary to avoid a bug in PySide, See:
+# https://bugreports.qt-project.org/browse/PYSIDE-20
+ALIGN_LEFT  = int(Qt.AlignVCenter | Qt.AlignLeft)
+ALIGN_RIGHT = int(Qt.AlignVCenter | Qt.AlignRight)
+
 class AttributeModel(object):
     """ Determines how an object attribute is rendered in a table column or details pane
     """ 
@@ -39,7 +44,7 @@ class AttributeModel(object):
                  data_fn = None,  
                  col_visible = True, 
                  width = SMALL_COL_WIDTH,
-                 alignment = Qt.AlignLeft, 
+                 alignment = ALIGN_LEFT, 
                  line_wrap = QTextOption.NoWrap):
         """
             Constructor
@@ -55,7 +60,7 @@ class AttributeModel(object):
             :param width: default width in the attribute table
             :type with: int
             :param alignment: alignment of the value in the table
-            :type alighment: Qt.AlignmentFlag 
+            :type alignment: Qt.AlignmentFlag 
             :param line_wrap: Line wrap mode of the attribute in the details pane
             :type line_wrap: QtGui.QPlainTextEdit
         """
@@ -102,7 +107,7 @@ def safe_tio_call(obj_fn, tree_item, log_exceptions=False):
     tio = tree_item.obj
     try:
         return str(obj_fn(tio))
-    except StandardError, ex:
+    except Exception as ex:
         if log_exceptions:
             logger.exception(ex)
         return ""    
@@ -138,7 +143,7 @@ def tio_summary(tree_item):
         For callables and modules an empty string is returned.
     """
     tio = tree_item.obj
-    if isinstance(tio, basestring):
+    if isinstance(tio, six.string_types):
         return tio
     elif isinstance(tio, (list, tuple, set, frozenset, dict)):  
         n_items = len(tio)
@@ -188,53 +193,60 @@ def tio_doc_str(tree_item):
 
 ATTR_MODEL_NAME = AttributeModel('name', 
     doc         = "The name of the object.", 
-    data_fn     = lambda(tree_item): tree_item.obj_name if tree_item.obj_name else '<root>',
+    data_fn     = lambda tree_item: tree_item.obj_name if tree_item.obj_name else '<root>',
     col_visible = True,  
     width       = SMALL_COL_WIDTH) 
 
 ATTR_MODEL_PATH = AttributeModel('path', 
     doc         = "A path to the data: e.g. var[1]['a'].item", 
-    data_fn     = lambda(tree_item): tree_item.obj_path if tree_item.obj_path else '<root>', 
+    data_fn     = lambda tree_item: tree_item.obj_path if tree_item.obj_path else '<root>', 
     col_visible = True,  
     width       = MEDIUM_COL_WIDTH) 
 
 ATTR_MODEL_SUMMARY = AttributeModel('summary', 
-    doc         = "A summary of the object for regular objects (not callables or modules)", 
+    doc         = """A summary of the object for regular objects (is empty for non-regular objects
+                     such as callables or modules).
+                  """,
     data_fn     = tio_summary,
     col_visible = True,  
-    alignment   = Qt.AlignLeft,
+    alignment   = ALIGN_LEFT,
     width       = MEDIUM_COL_WIDTH) 
 
 ATTR_MODEL_UNICODE = AttributeModel('unicode', 
-    doc         = "The unicode representation of the object using the unicode() function.",
-    data_fn     = lambda(tree_item): unicode(tree_item.obj),
+    doc         = """The unicode representation of the object. In Python 2 it uses unicode()
+                     In Python 3 the str() function is used.
+                  """, 
+    data_fn     = lambda tree_item: six.text_type(tree_item.obj),
     col_visible = True,  
     width       = MEDIUM_COL_WIDTH, 
     line_wrap   = QTextOption.WrapAtWordBoundaryOrAnywhere) 
 
+
 ATTR_MODEL_STR = AttributeModel('str', 
-    doc         = "The string representation of the object using the str() function.",
-    data_fn     = lambda(tree_item): str(tree_item.obj),
+    doc         = """The string representation of the object using the str() function.
+                     In Python 3 there is no difference with the 'unicode' column.
+                  """,
+    data_fn     = lambda tree_item: str(tree_item.obj),
     col_visible = False,  
     width       = MEDIUM_COL_WIDTH, 
     line_wrap   = QTextOption.WrapAtWordBoundaryOrAnywhere) 
  
 ATTR_MODEL_REPR = AttributeModel('repr', 
     doc         = "The string representation of the object using the repr() function.", 
-    data_fn     = lambda(tree_item): repr(tree_item.obj),         
+    data_fn     = lambda tree_item: repr(tree_item.obj),         
     col_visible = True,  
     width       = MEDIUM_COL_WIDTH, 
     line_wrap   = QTextOption.WrapAtWordBoundaryOrAnywhere) 
 
 ATTR_MODEL_TYPE = AttributeModel('type', 
     doc         = "Type of the object determined using the builtin type() function", 
-    data_fn     = lambda(tree_item): str(type(tree_item.obj)),
+    data_fn     = lambda tree_item: str(type(tree_item.obj)),
     col_visible = False,  
     width       = MEDIUM_COL_WIDTH) 
 
 ATTR_MODEL_CLASS = AttributeModel('type name', 
     doc         = "The name of the class of the object via obj.__class__.__name__", 
-    data_fn     = lambda(tree_item): type(tree_item.obj).__name__,
+    data_fn     = lambda tree_item: type(tree_item.obj).__name__,
     col_visible = True,  
     width       = MEDIUM_COL_WIDTH) 
 
@@ -243,31 +255,38 @@ ATTR_MODEL_LENGTH = AttributeModel('length',
     #data_fn     = tio_length,
     data_fn      = safe_data_fn(len),  
     col_visible = False,  
-    alignment   = Qt.AlignRight,
+    alignment   = ALIGN_RIGHT,
     width       = SMALL_COL_WIDTH) 
 
 ATTR_MODEL_ID = AttributeModel('id', 
     doc         = "The identifier of the object with calculated using the id() function", 
-    data_fn     = lambda(tree_item): "0x{:X}".format(id(tree_item.obj)), 
+    data_fn     = lambda tree_item: "0x{:X}".format(id(tree_item.obj)), 
     col_visible = False, 
-    alignment   = Qt.AlignRight, 
+    alignment   = ALIGN_RIGHT, 
     width       = SMALL_COL_WIDTH) 
 
 ATTR_MODEL_IS_ATTRIBUTE = AttributeModel('is attribute', 
-    doc         = "The object is an attribute of the parent (opposed to e.g. a list element)", 
+    doc         = """The object is an attribute of the parent (opposed to e.g. a list element).
+                     Attributes are displayed in italics in the table.
+                  """,
     data_fn     = tio_is_attribute, 
     col_visible = False,  
     width       = SMALL_COL_WIDTH) 
 
 ATTR_MODEL_CALLABLE = AttributeModel('is callable', 
-    doc         = "The if the is callable (e.g. a function or a method)", 
+    doc         = """True if the object is callable.
+                     Determined with the `callable` built-in function.
+                     Callable objects are displayed in blue in the table.
+                  """,
     data_fn     = tio_is_callable, 
     col_visible = True,  
     width       = SMALL_COL_WIDTH) 
 
 ATTR_MODEL_IS_ROUTINE = AttributeModel('is routine', 
-    doc         = "True if the object is a routine (function, method, etc.)" ,
-    data_fn     = lambda(tree_item): str(inspect.isroutine(tree_item.obj)), 
+    doc         = """True if the object is a user-defined or built-in function or method.
+                     Determined with the inspect.isroutine() method.
+                  """ ,
+    data_fn     = lambda tree_item: str(inspect.isroutine(tree_item.obj)), 
     col_visible = False,  
     width       = SMALL_COL_WIDTH) 
 
@@ -279,7 +298,7 @@ ATTR_MODEL_PRED = AttributeModel('inspect predicates',
 
 ATTR_MODEL_PRETTY_PRINT = AttributeModel('pretty print', 
     doc         = "Pretty printed representation of the object using the pprint module.", 
-    data_fn     = lambda(tree_item): _PRETTY_PRINTER.pformat(tree_item.obj),         
+    data_fn     = lambda tree_item: _PRETTY_PRINTER.pformat(tree_item.obj),         
     col_visible = False,  
     width       = MEDIUM_COL_WIDTH) 
         
@@ -290,31 +309,31 @@ ATTR_MODEL_DOC_STRING = AttributeModel('doc string',
     width       = MEDIUM_COL_WIDTH)
         
 ATTR_MODEL_GET_DOC = AttributeModel('inspect.getdoc', 
-    doc         = "The object's doc string cleaned up by inspect.getdoc()", 
+    doc         = "The object's doc string, leaned up by inspect.getdoc()",
     data_fn     = safe_data_fn(inspect.getdoc),         
     col_visible = False,  
     width       = MEDIUM_COL_WIDTH)
         
 ATTR_MODEL_GET_COMMENTS = AttributeModel('inspect.getcomments', 
-    doc         = "Comments above the object's definition is retrieved using inspect.getcomments()", 
-    data_fn     = lambda(tree_item): inspect.getcomments(tree_item.obj),         
+    doc         = "Comments above the object's definition. Retrieved using inspect.getcomments()",
+    data_fn     = lambda tree_item: inspect.getcomments(tree_item.obj),         
     col_visible = False,  
     width       = MEDIUM_COL_WIDTH)
         
 ATTR_MODEL_GET_MODULE = AttributeModel('inspect.getmodule', 
-    doc         = "The object's module retrieved using inspect.module", 
+    doc         = "The object's module. Retrieved using inspect.module",
     data_fn     = safe_data_fn(inspect.getmodule),         
     col_visible = False,  
     width       = MEDIUM_COL_WIDTH) 
         
 ATTR_MODEL_GET_FILE = AttributeModel('inspect.getfile', 
-    doc         = "The object's file retrieved using inspect.getfile", 
+    doc         = "The object's file. Retrieved using inspect.getfile",
     data_fn     = safe_data_fn(inspect.getfile),         
     col_visible = False,  
     width       = MEDIUM_COL_WIDTH)
         
 ATTR_MODEL_GET_SOURCE_FILE = AttributeModel('inspect.getsourcefile', # calls inspect.getfile()
-    doc         = "The object's file retrieved using inspect.getsourcefile", 
+    doc         = "The object's file. Retrieved using inspect.getsourcefile",
     data_fn     = safe_data_fn(inspect.getsourcefile),         
     col_visible = False,  
     width       = MEDIUM_COL_WIDTH)

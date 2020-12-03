@@ -5,7 +5,7 @@ import os
 import sys
 sys.path.append(os.path.pardir)
 import math
-from qframer.qt import QtCore, QtGui, QtOpenGL
+from PySide2 import QtCore, QtGui, QtOpenGL
 
 try:
     from OpenGL import GL
@@ -17,7 +17,7 @@ except ImportError:
                             QtGui.QMessageBox.NoButton)
     sys.exit(1)
 
-print('using %s(%s)' % (os.environ['QT_API'], QtCore.__version__))
+print('using %s(%s)' % (os.environ['QT_API'], *__version__))
 
 class Window(QtGui.QWidget):
     def __init__(self, parent=None):
@@ -25,11 +25,11 @@ class Window(QtGui.QWidget):
 
         self.glWidget = GLWidget()
 
-        self.xSlider = self.createSlider(QtCore.SIGNAL("xRotationChanged(int)"),
+        self.xSlider = self.createSlider(*SIGNAL("xRotationChanged(int)"),
                                          self.glWidget.setXRotation)
-        self.ySlider = self.createSlider(QtCore.SIGNAL("yRotationChanged(int)"),
+        self.ySlider = self.createSlider(*SIGNAL("yRotationChanged(int)"),
                                          self.glWidget.setYRotation)
-        self.zSlider = self.createSlider(QtCore.SIGNAL("zRotationChanged(int)"),
+        self.zSlider = self.createSlider(*SIGNAL("zRotationChanged(int)"),
                                          self.glWidget.setZRotation)
 
         mainLayout = QtGui.QHBoxLayout()
@@ -46,7 +46,7 @@ class Window(QtGui.QWidget):
         self.setWindowTitle(self.tr("Hello GL"))
 
     def createSlider(self, changedSignal, setterSlot):
-        slider = QtGui.QSlider(QtCore.Qt.Vertical)
+        slider = QtGui.QSlider(*Qt.Vertical)
 
         slider.setRange(0, 360 * 16)
         slider.setSingleStep(16)
@@ -54,8 +54,8 @@ class Window(QtGui.QWidget):
         slider.setTickInterval(15 * 16)
         slider.setTickPosition(QtGui.QSlider.TicksRight)
 
-        self.glWidget.connect(slider, QtCore.SIGNAL("valueChanged(int)"), setterSlot)
-        self.connect(self.glWidget, changedSignal, slider, QtCore.SLOT("setValue(int)"))
+        self.glWidget.connect(slider, *SIGNAL("valueChanged(int)"), setterSlot)
+        self.connect(self.glWidget, changedSignal, slider, *SLOT("setValue(int)"))
 
         return slider
 
@@ -69,7 +69,7 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.yRot = 0
         self.zRot = 0
 
-        self.lastPos = QtCore.QPoint()
+        self.lastPos = *QPoint()
 
         self.trolltechGreen = QtGui.QColor.fromCmykF(0.40, 0.0, 1.0, 0.0)
         self.trolltechPurple = QtGui.QColor.fromCmykF(0.39, 0.39, 0.0, 0.0)
@@ -84,30 +84,30 @@ class GLWidget(QtOpenGL.QGLWidget):
         return self.zRot
 
     def minimumSizeHint(self):
-        return QtCore.QSize(50, 50)
+        return *QSize(50, 50)
 
     def sizeHint(self):
-        return QtCore.QSize(400, 400)
+        return *QSize(400, 400)
 
     def setXRotation(self, angle):
         angle = self.normalizeAngle(angle)
         if angle != self.xRot:
             self.xRot = angle
-            self.emit(QtCore.SIGNAL("xRotationChanged(int)"), angle)
+            self.emit(*SIGNAL("xRotationChanged(int)"), angle)
             self.updateGL()
 
     def setYRotation(self, angle):
         angle = self.normalizeAngle(angle)
         if angle != self.yRot:
             self.yRot = angle
-            self.emit(QtCore.SIGNAL("yRotationChanged(int)"), angle)
+            self.emit(*SIGNAL("yRotationChanged(int)"), angle)
             self.updateGL()
 
     def setZRotation(self, angle):
         angle = self.normalizeAngle(angle)
         if angle != self.zRot:
             self.zRot = angle
-            self.emit(QtCore.SIGNAL("zRotationChanged(int)"), angle)
+            self.emit(*SIGNAL("zRotationChanged(int)"), angle)
             self.updateGL()
 
     def initializeGL(self):
@@ -136,20 +136,20 @@ class GLWidget(QtOpenGL.QGLWidget):
         GL.glMatrixMode(GL.GL_MODELVIEW)
 
     def mousePressEvent(self, event):
-        self.lastPos = QtCore.QPoint(event.pos())
+        self.lastPos = *QPoint(event.pos())
 
     def mouseMoveEvent(self, event):
         dx = event.x() - self.lastPos.x()
         dy = event.y() - self.lastPos.y()
 
-        if event.buttons() & QtCore.Qt.LeftButton:
+        if event.buttons() & *Qt.LeftButton:
             self.setXRotation(self.xRot + 8 * dy)
             self.setYRotation(self.yRot + 8 * dx)
-        elif event.buttons() & QtCore.Qt.RightButton:
+        elif event.buttons() & *Qt.RightButton:
             self.setXRotation(self.xRot + 8 * dy)
             self.setZRotation(self.zRot + 8 * dx)
 
-        self.lastPos = QtCore.QPoint(event.pos())
+        self.lastPos = *QPoint(event.pos())
 
     def makeObject(self):
         genList = GL.glGenLists(1)

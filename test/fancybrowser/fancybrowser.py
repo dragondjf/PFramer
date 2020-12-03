@@ -44,11 +44,11 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(os.path.pardir)))
 
-from qframer.qt.QtCore import QFile, QIODevice, Qt, QTextStream, QUrl
-from qframer.qt.QtWidgets import (QAction, QApplication, QLineEdit, QMainWindow,
+from PySide2.QtCore import QFile, QIODevice, Qt, QTextStream, QUrl
+from PySide2.QtWidgets import (QAction, QApplication, QLineEdit, QMainWindow,
         QSizePolicy, QStyle, QTextEdit)
-from qframer.qt.QtNetwork import QNetworkProxyFactory, QNetworkRequest
-from qframer.qt.QtWebKit import QWebPage, QWebView
+from PySide2.QtNetwork import QNetworkProxyFactory, QNetworkRequest
+from PySide2.QtWebKit import QWebPage, QWebView
 
 import jquery_rc
 

@@ -2,13 +2,13 @@
 # -*- coding:utf-8 -*-
 
 import sys
-from qframer.qt import QtGui
-from qframer.qt import QtCore
+from PySide2 import QtGui
+from PySide2 import QtCore
 
 
 class ThFrame(QtGui.QFrame):
 
-    def __init__(self, parent=None, windowFlags=QtCore.Qt.Widget):
+    def __init__(self, parent=None, windowFlags=*Qt.Widget):
         super(ThFrame, self).__init__(parent, windowFlags)
         self.initData()
         self.initUI()
@@ -24,8 +24,8 @@ class ThFrame(QtGui.QFrame):
         self.showMaximumFlag = False  # 最大化显示标志
 
     def initUI(self):
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowSystemMenuHint |
-                            QtCore.Qt.WindowMinimizeButtonHint)  # 无边框， 带系统菜单， 可以最小化)
+        self.setWindowFlags(*Qt.FramelessWindowHint | *Qt.WindowSystemMenuHint |
+                            *Qt.WindowMinimizeButtonHint)  # 无边框， 带系统菜单， 可以最小化)
 
         self.centralWidget = QtGui.QFrame()  # QtGui.QLabel('centralWidget')
         self.centralWidget.setMouseTracking(True)
@@ -39,11 +39,11 @@ class ThFrame(QtGui.QFrame):
         self.rectFrame = self.geometry()
 
     def keyPressEvent(self, e):
-        if e.key() == QtCore.Qt.Key_Escape:
+        if e.key() == *Qt.Key_Escape:
             self.close()
 
     def mousePressEvent(self, e):
-        if QtCore.Qt.LeftButton == e.button():
+        if *Qt.LeftButton == e.button():
             self.leftMousePress = True
             self.globalStartPosition = e.globalPos()
 
@@ -56,7 +56,7 @@ class ThFrame(QtGui.QFrame):
         self.globalStartPosition = e.globalPos()
 
     def mouseReleaseEvent(self, e):
-        if e.button() == QtCore.Qt.LeftButton:
+        if e.button() == *Qt.LeftButton:
             self.leftMousePress = False
             self.dragDirection = self.getDragDirection(
                 e.globalX(), e.globalY())
@@ -136,15 +136,15 @@ class ThFrame(QtGui.QFrame):
         '''dragDirection:0-left,1-right,2-top,3-bottom,4-topleft,5-topright,6-bottomleft,7-bottomright,8-normal
         '''
         if 0 == direction or 1 == direction:
-            self.setCursor(QtCore.Qt.SizeHorCursor)
+            self.setCursor(*Qt.SizeHorCursor)
         elif 2 == direction or 3 == direction:
-            self.setCursor(QtCore.Qt.SizeVerCursor)
+            self.setCursor(*Qt.SizeVerCursor)
         elif 4 == direction or 7 == direction:
-            self.setCursor(QtCore.Qt.SizeFDiagCursor)
+            self.setCursor(*Qt.SizeFDiagCursor)
         elif 5 == direction or 6 == direction:
-            self.setCursor(QtCore.Qt.SizeBDiagCursor)
+            self.setCursor(*Qt.SizeBDiagCursor)
         else:
-            self.setCursor(QtCore.Qt.ArrowCursor)
+            self.setCursor(*Qt.ArrowCursor)
 
 
 def main():

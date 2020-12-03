@@ -1,38 +1,27 @@
-""" 
-    Object browser GUI in Qt
-    
-    #####################
-    # TODO: version 1.0 #
-    #####################
-
-    # What todo when getmembers fails
-    # Installing
-     - rename attribute_model.py to attributemodel.py
-     - sphynx
-    
-    
-    #####################
-    # TODO: version 1.x #
-    #####################
-    # Ordered dict should not sort keys 
-    # hide non-attributes' attributes? That is, list's and dict's attributes are hidden.
-    # tool-tips
-    # python 3
-    # Examples:
-     - Qt
-
+""" Object browser GUI in Qt
 """
+# TODO:
+# What to do when getmembers fails
+# call get_set descriptors (getters) in summary column.
+# ufuncs?
+# tool-tips
+# sphynx
+
+# qtpy
+
 from __future__ import absolute_import
 from __future__ import print_function
-import logging, traceback
-from PyQt5 import QtCore, QtGui
-from PyQt5.QtCore import Qt
-from qframer import FMainWindow
-from qframer.resources import *
+import logging, traceback, hashlib, sys
 
+
+from objbrowser.qtpy import QtCore, QtGui, QtWidgets
+from objbrowser.qtpy.QtCore import Slot
+
+from objbrowser.app import get_qapp, get_qsettings, start_qt_event_loop
 from objbrowser.version import PROGRAM_NAME, PROGRAM_VERSION, PROGRAM_URL, DEBUGGING
+from objbrowser.version import PYTHON_VERSION, QT_API_NAME, QT_API, QTPY_VERSION
 from objbrowser.utils import setting_str_to_bool
-from objbrowser.treemodel import TreeModel
+from objbrowser.treemodel import TreeProxyModel, TreeModel
 from objbrowser.toggle_column_mixin import ToggleColumnTreeView
 from objbrowser.attribute_model import DEFAULT_ATTR_COLS, DEFAULT_ATTR_DETAILS
 
@@ -47,17 +36,20 @@ logger = logging.getLogger(__name__)
 # from one stack frame higher; you can't know if the ObjectBrowser.__init__ was
 # called directly, via the browse() wrapper or via a descendants' constructor.
 
-class ObjectBrowser(FMainWindow):
+class ObjectBrowser(QtWidgets.QMainWindow):
     """ Object browser main application window.
     """
-    _n_instances = 0
+    _q_app = None   # Reference to the global application.
+    _browsers = []  # Keep lists of browser windows.
     
-    def __init__(self, obj,  
+    def __init__(self, obj,
                  name = '',
-                 attribute_columns = DEFAULT_ATTR_COLS,  
-                 attribute_details = DEFAULT_ATTR_DETAILS,  
-                 show_routine_attributes = None,
-                 show_special_attributes = None, 
+                 attribute_columns = DEFAULT_ATTR_COLS,
+                 attribute_details = DEFAULT_ATTR_DETAILS,
+                 show_callable_attributes = None,  # None uses value from QSettings
+                 show_special_attributes = None,  # None uses value from QSettings
+                 auto_refresh=None,  # None uses value from QSettings
+                 refresh_rate=None,  # None uses value from QSettings
                  reset = False):
         """ Constructor
         
@@ -67,129 +59,172 @@ class ObjectBrowser(FMainWindow):
                 are present in the table and their defaults
             :param attribute_details: list of AttributeDetails objects that define which attributes
                 can be selected in the details pane.
-            :param show_routine_attributes: if True rows where the 'is attribute' and 'is routine'
+            :param show_callable_attributes: if True rows where the 'is attribute' and 'is callable'
                 columns are both True, are displayed. Otherwise they are hidden. 
             :param show_special_attributes: if True rows where the 'is attribute' is True and
                 the object name starts and ends with two underscores, are displayed. Otherwise 
                 they are hidden.
+            :param auto_refresh: If True, the contents refershes itsef every <refresh_rate> seconds.
+            :param refresh_rate: number of seconds between automatic refreshes. Default = 2 .
             :param reset: If true the persistent settings, such as column widths, are reset. 
         """
         super(ObjectBrowser, self).__init__()
 
-        ObjectBrowser._n_instances += 1
-        self._instance_nr = self._n_instances        
+        self._instance_nr = self._add_instance()
         
         # Model
         self._attr_cols = attribute_columns
         self._attr_details = attribute_details
         
-        (show_routine_attributes, 
-         show_special_attributes) = self._readModelSettings(reset = reset, 
-                                                            show_routine_attributes = show_routine_attributes,
-                                                            show_special_attributes = show_special_attributes)
-        self.show_routine_attributes = show_routine_attributes
-        self.show_special_attributes = show_special_attributes
+        (self._auto_refresh, self._refresh_rate, show_callable_attributes, show_special_attributes) = \
+            self._readModelSettings(reset = reset,
+                                    auto_refresh = auto_refresh,
+                                    refresh_rate = refresh_rate,
+                                    show_callable_attributes= show_callable_attributes,
+                                    show_special_attributes = show_special_attributes)
+
+        self._tree_model = TreeModel(obj, name, attr_cols = self._attr_cols)
+            
+        self._proxy_tree_model = TreeProxyModel(
+            show_callable_attributes= show_callable_attributes,
+            show_special_attributes = show_special_attributes)
         
+        self._proxy_tree_model.setSourceModel(self._tree_model)
+        #self._proxy_tree_model.setSortRole(RegistryTableModel.SORT_ROLE)
+        self._proxy_tree_model.setDynamicSortFilter(True) 
+        #self._proxy_tree_model.setSortCaseSensitivity(Qt.CaseInsensitive)
+                
         # Views
-        self._setup_views()
-
-        self.setModel(obj)
-
         self._setup_actions()
         self._setup_menu()
-
+        self._setup_views()
         self.setWindowTitle("{} - {}".format(PROGRAM_NAME, name))
-        app = QtGui.QApplication.instance()
-        app.lastWindowClosed.connect(app.quit)
 
-        self.initSize()
+        self._readViewSettings(reset = reset)
 
-        self.titleBar().skinButton.hide()
-        self.titleBar().closeButton.clicked.connect(self.close)
+        assert self._refresh_rate > 0, "refresh_rate must be > 0. Got: {}".format(self._refresh_rate)
+        self._refresh_timer = QtCore.QTimer(self)
+        self._refresh_timer.setInterval(self._refresh_rate * 1000)
+        self._refresh_timer.timeout.connect(self.refresh)
+        
+        # Update views with model
+        self.toggle_special_attribute_action.setChecked(show_special_attributes)
+        self.toggle_callable_action.setChecked(show_callable_attributes)
+        self.toggle_auto_refresh_action.setChecked(self._auto_refresh)
+     
+        # Select first row so that a hidden root node will not be selected.
+        first_row_index = self._proxy_tree_model.firstItemIndex()
+        self.obj_tree.setCurrentIndex(first_row_index)
+        if self._tree_model.inspectedNodeIsVisible:
+            self.obj_tree.expand(first_row_index)
+        
 
-        self.setWindowIcon(":/icons/dark/appbar.tree.png")
+    def refresh(self):
+        """ Refreshes object brawser contents
+        """
+        logger.debug("Refreshing")
+        self._tree_model.refreshTree()
+        
+        
+    def _add_instance(self):
+        """ Adds the browser window to the list of browser references.
+            If a None is present in the list it is inserted at that position, otherwise
+            it is appended to the list. The index number is returned.
+            
+            This mechanism is used so that repeatedly creating and closing windows does not
+            increase the instance number, which is used in writing the persistent settings.
+        """
+        try:
+            idx = self._browsers.index(None)
+        except ValueError:
+            self._browsers.append(self)
+            idx = len(self._browsers) - 1
+        else:
+            self._browsers[idx] = self
 
-        self.titleBar().modeButton.click()
-
-        self.toggle_callable_action.toggle()
+        return idx
 
 
-    def initSize(self):
-        desktopWidth = QtGui.QDesktopWidget().availableGeometry().width()
-        desktopHeight = QtGui.QDesktopWidget().availableGeometry().height()
-        self.resize(
-            desktopWidth * 0.6,
-            desktopHeight * 0.8)
-        self.moveCenter()
-
-    def setModel(self, obj):
-        self._tree_model = TreeModel(obj, 
-            root_obj_name = '',
-            attr_cols = self._attr_cols,  
-            show_routine_attributes = self.show_routine_attributes,
-            show_special_attributes = self.show_special_attributes
-        )
-
-        self.obj_tree.setModel(self._tree_model)
-
-        first_row = self._tree_model.first_item_index()
-        self.obj_tree.setCurrentIndex(first_row)
-
-        # Connect signals
-        selection_model = self.obj_tree.selectionModel()
-        selection_model.currentChanged.connect(self._update_details)
-
+    def _remove_instance(self):
+        """ Sets the reference in the browser list to None. 
+        """
+        idx = self._browsers.index(self)
+        self._browsers[idx] = None
+        
+            
     def _make_show_column_function(self, column_idx):
         """ Creates a function that shows or hides a column."""
         show_column = lambda checked: self.obj_tree.setColumnHidden(column_idx, not checked)
-        return show_column
+        return show_column            
+
 
     def _setup_actions(self):
         """ Creates the main window actions.
         """
         # Show/hide callable objects
         self.toggle_callable_action = \
-            QtGui.QAction("Show routine attributes", self, checkable=True, 
-                          statusTip = "Shows/hides attributes that are routings (functions, methods, etc)")
-        self.toggle_callable_action.toggled.connect(self.toggle_callables)
+            QtWidgets.QAction("Show callable attributes", self, checkable=True,
+                          shortcut = QtGui.QKeySequence("Alt+C"),
+                          statusTip = "Shows/hides attributes that are callable (functions, methods, etc)")
+        self.toggle_callable_action.toggled.connect(self._proxy_tree_model.setShowCallables)
                               
         # Show/hide special attributes
         self.toggle_special_attribute_action = \
-            QtGui.QAction("Show __special__ attributes", self, checkable=True, 
+            QtWidgets.QAction("Show __special__ attributes", self, checkable=True,
+                          shortcut = QtGui.QKeySequence("Alt+S"),
                           statusTip = "Shows or hides __special__ attributes")
-        self.toggle_special_attribute_action.toggled.connect(self.toggle_special_attributes)
- 
+        self.toggle_special_attribute_action.toggled.connect(self._proxy_tree_model.setShowSpecialAttributes)
+
+        # Toggle auto-refresh on/off
+        self.toggle_auto_refresh_action = \
+            QtWidgets.QAction("Auto-refresh", self, checkable=True,
+                          statusTip = "Auto refresh every {} seconds".format(self._refresh_rate))
+        self.toggle_auto_refresh_action.toggled.connect(self.toggle_auto_refresh)
+                              
+        # Add another refresh action with a different short cut. An action must be added to
+        # a visible widget for it to receive events. It is added to the main windows to prevent it
+        # from being displayed again in the menu
+        self.refresh_action_f5 = QtWidgets.QAction(self, text="&Refresh2", shortcut="F5")
+        self.refresh_action_f5.triggered.connect(self.refresh)
+        self.addAction(self.refresh_action_f5) 
+        
+                              
     def _setup_menu(self):
         """ Sets up the main menu.
         """
-        # file_menu = self.menuBar().addMenu("&File")
-        self.menu = QtGui.QMenu(self)
-        self.menu.addAction("C&lose", self.close_window, "Ctrl+W")
-        self.menu.addAction("E&xit", self.quit_application, "Ctrl+Q")
+        file_menu = self.menuBar().addMenu("&File")
+        file_menu.addAction("C&lose", self.close, "Ctrl+W")
+        file_menu.addAction("E&xit", self.quit_application, "Ctrl+Q")
         if DEBUGGING is True:
-            self.menu.addSeparator()
-            self.menu.addAction("&Test", self.my_test, "Ctrl+T")
+            file_menu.addSeparator()
+            file_menu.addAction("&Test", self.my_test, "Ctrl+T")
+        
+        view_menu = self.menuBar().addMenu("&View")
+        view_menu.addAction("&Refresh", self.refresh, "Ctrl+R")
+        view_menu.addAction(self.toggle_auto_refresh_action)
+        
+        view_menu.addSeparator()
+        self.show_cols_submenu = view_menu.addMenu("Table columns")
+        view_menu.addSeparator()
+        view_menu.addAction(self.toggle_callable_action)
+        view_menu.addAction(self.toggle_special_attribute_action)
+        
+        self.menuBar().addSeparator()
+        help_menu = self.menuBar().addMenu("&Help")
+        help_menu.addAction('&About', self.about)
 
-        self.show_cols_submenu = self.menu.addMenu("Table columns")
-        self.menu.addAction(self.toggle_callable_action)
-        self.menu.addAction(self.toggle_special_attribute_action)
-
-        self.titleBar().settingDownButton.setMenu(self.menu)
-        self.titleBar().settingMenuShowed.connect(
-            self.titleBar().settingDownButton.showMenu)
 
     def _setup_views(self):
         """ Creates the UI widgets. 
         """
-        self.central_splitter = QtGui.QSplitter(self, orientation = QtCore.Qt.Vertical)
+        self.central_splitter = QtWidgets.QSplitter(self, orientation = QtCore.Qt.Vertical)
         self.setCentralWidget(self.central_splitter)
-        # central_layout = QtGui.QVBoxLayout()
-        # self.central_splitter.setLayout(central_layout)
-        
+
         # Tree widget
         self.obj_tree = ToggleColumnTreeView()
         self.obj_tree.setAlternatingRowColors(True)
-        self.obj_tree.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.obj_tree.setModel(self._proxy_tree_model)
+        self.obj_tree.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.obj_tree.setUniformRowHeights(True)
         self.obj_tree.setAnimated(True)
         self.obj_tree.add_header_context_menu()
@@ -197,7 +232,7 @@ class ObjectBrowser(FMainWindow):
         # Stretch last column? 
         # It doesn't play nice when columns are hidden and then shown again.
         obj_tree_header = self.obj_tree.header()
-        # obj_tree_header.setMovable(True)
+        obj_tree_header.setSectionsMovable(True)
         obj_tree_header.setStretchLastSection(False)
         for action in self.obj_tree.toggle_column_actions_group.actions():
             self.show_cols_submenu.addAction(action)
@@ -205,29 +240,29 @@ class ObjectBrowser(FMainWindow):
         self.central_splitter.addWidget(self.obj_tree)
 
         # Bottom pane
-        bottom_pane_widget = QtGui.QWidget()
-        bottom_layout = QtGui.QHBoxLayout()
+        bottom_pane_widget = QtWidgets.QWidget()
+        bottom_layout = QtWidgets.QHBoxLayout()
         bottom_layout.setSpacing(0)
         bottom_layout.setContentsMargins(5, 5, 5, 5) # left top right bottom
         bottom_pane_widget.setLayout(bottom_layout)
         self.central_splitter.addWidget(bottom_pane_widget)
         
-        group_box = QtGui.QGroupBox("Details")
+        group_box = QtWidgets.QGroupBox("Details")
         bottom_layout.addWidget(group_box)
         
-        group_layout = QtGui.QHBoxLayout()
+        group_layout = QtWidgets.QHBoxLayout()
         group_layout.setContentsMargins(2, 2, 2, 2) # left top right bottom
         group_box.setLayout(group_layout)
         
         # Radio buttons
-        radio_widget = QtGui.QWidget()
-        radio_layout = QtGui.QVBoxLayout()
+        radio_widget = QtWidgets.QWidget()
+        radio_layout = QtWidgets.QVBoxLayout()
         radio_layout.setContentsMargins(0, 0, 0, 0) # left top right bottom        
         radio_widget.setLayout(radio_layout) 
 
-        self.button_group = QtGui.QButtonGroup(self)
+        self.button_group = QtWidgets.QButtonGroup(self)
         for button_id, attr_detail in enumerate(self._attr_details):
-            radio_button = QtGui.QRadioButton(attr_detail.name)
+            radio_button = QtWidgets.QRadioButton(attr_detail.name)
             radio_layout.addWidget(radio_button)
             self.button_group.addButton(radio_button, button_id)
 
@@ -243,7 +278,7 @@ class ObjectBrowser(FMainWindow):
         font.setFixedPitch(True)
         #font.setPointSize(14)
 
-        self.editor = QtGui.QPlainTextEdit()
+        self.editor = QtWidgets.QPlainTextEdit()
         self.editor.setReadOnly(True)
         self.editor.setFont(font)
         group_layout.addWidget(self.editor)
@@ -254,52 +289,84 @@ class ObjectBrowser(FMainWindow):
         self.central_splitter.setSizes([400, 200])
         self.central_splitter.setStretchFactor(0, 10)
         self.central_splitter.setStretchFactor(1, 0)
+               
+        # Connect signals
+        # Keep a temporary reference of the selection_model to prevent segfault in PySide.
+        # See http://permalink.gmane.org/gmane.comp.lib.qt.pyside.devel/222
+        selection_model = self.obj_tree.selectionModel() 
+        selection_model.currentChanged.connect(self._update_details)
 
     # End of setup_methods
     
     
-    def _settings_group_name(self, prefix):
-        """ The persistent settings are stored per combination of column names
-            and windows instance number.
+    def _settings_group_name(self, postfix):
+        """ Constructs a group name for the persistent settings.
+            
+            Because the columns in the main table are extendible, we must store the settings
+            in a different group if a different combination of columns is used. Therefore the
+            settings group name contains a hash that is calculated from the used column names.
+            Furthermore the window number is included in the settings group name. Finally a
+            postfix string is appended. 
         """
         column_names = ",".join([col.name for col in self._attr_cols])
-        settings_str = column_names + str(self._instance_nr)
-        settings_grp = "{}_{}".format(prefix, hex(hash(settings_str)))
-        logger.debug("  settings group is: {!r}".format(settings_grp))
+        settings_str = column_names
+        columns_hash = hashlib.md5(settings_str.encode('utf-8')).hexdigest()
+        settings_grp = "{}_win{}_{}".format(columns_hash, self._instance_nr, postfix)
         return settings_grp
 
                 
-    def _readModelSettings(self, 
-                           reset=False, 
-                           show_routine_attributes = None,
+    def _readModelSettings(self,
+                           reset=False,
+                           auto_refresh = None,
+                           refresh_rate = None,
+                           show_callable_attributes = None,
                            show_special_attributes = None):
         """ Reads the persistent model settings .
-            The persistent settings (show_routine_attributes, show_special_attributes) can be \
+            The persistent settings (show_callable_attributes, show_special_attributes) can be \
             overridden by giving it a True or False value.
             If reset is True and the setting is None, True is used as default.
         """ 
+        default_auto_refresh = False
+        default_refresh_rate = 2
         default_sra = True
         default_ssa = True
         if reset:
             logger.debug("Resetting persistent model settings")
-            if show_routine_attributes is None:
-                show_routine_attributes = default_sra
+            if refresh_rate is None:
+                refresh_rate = default_refresh_rate
+            if auto_refresh is None:
+                auto_refresh = default_auto_refresh
+            if show_callable_attributes is None:
+                show_callable_attributes = default_sra
             if show_special_attributes is None:
                 show_special_attributes = default_ssa
         else:
             logger.debug("Reading model settings for window: {:d}".format(self._instance_nr))
-            settings = QtCore.QSettings()
+            settings = get_qsettings()
             settings.beginGroup(self._settings_group_name('model'))
-            if show_routine_attributes is None:
-                show_routine_attributes = setting_str_to_bool(
-                    settings.value("show_routine_attributes", default_sra))
+
+            if auto_refresh is None:
+                auto_refresh = setting_str_to_bool(
+                    settings.value("auto_refresh", default_auto_refresh))
+            logger.debug("read auto_refresh: {!r}".format(auto_refresh))
+
+            if refresh_rate is None:
+                refresh_rate = float(settings.value("refresh_rate", default_refresh_rate))
+            logger.debug("read refresh_rate: {!r}".format(refresh_rate))
+
+            if show_callable_attributes is None:
+                show_callable_attributes = setting_str_to_bool(
+                    settings.value("show_callable_attributes", default_sra))
+            logger.debug("read show_callable_attributes: {!r}".format(show_callable_attributes))
+                
             if show_special_attributes is None:
                 show_special_attributes = setting_str_to_bool(
                     settings.value("show_special_attributes", default_ssa))
-            settings.endGroup()
-            logger.debug("read show_routine_attributes: {!r}".format(show_routine_attributes))
             logger.debug("read show_special_attributes: {!r}".format(show_special_attributes))
-        return (show_routine_attributes, show_special_attributes)
+            
+            settings.endGroup()
+                        
+        return (auto_refresh, refresh_rate, show_callable_attributes, show_special_attributes)
                     
     
     def _writeModelSettings(self):
@@ -307,12 +374,23 @@ class ObjectBrowser(FMainWindow):
         """         
         logger.debug("Writing model settings for window: {:d}".format(self._instance_nr))
         
-        settings = QtCore.QSettings()
+        settings = get_qsettings()
         settings.beginGroup(self._settings_group_name('model'))
-        logger.debug("writing show_routine_attributes: {!r}".format(self._tree_model.getShowCallables()))
-        logger.debug("wrting show_special_attributes: {!r}".format(self._tree_model.getShowSpecialAttributes()))
-        settings.setValue("show_routine_attributes", self._tree_model.getShowCallables())
-        settings.setValue("show_special_attributes", self._tree_model.getShowSpecialAttributes())
+
+        logger.debug("writing auto_refresh: {!r}".format(self._auto_refresh))
+        settings.setValue("auto_refresh", self._auto_refresh)
+        
+        logger.debug("writing refresh_rate: {!r}".format(self._refresh_rate))
+        settings.setValue("refresh_rate", self._refresh_rate)
+
+        logger.debug("writing show_callable_attributes: {!r}"
+                     .format(self._proxy_tree_model.getShowCallables()))
+        settings.setValue("show_callable_attributes", self._proxy_tree_model.getShowCallables())
+
+        logger.debug("writing show_special_attributes: {!r}"
+                     .format(self._proxy_tree_model.getShowSpecialAttributes()))
+        settings.setValue("show_special_attributes", self._proxy_tree_model.getShowSpecialAttributes())
+        
         settings.endGroup()
         
     
@@ -332,12 +410,14 @@ class ObjectBrowser(FMainWindow):
             logger.debug("Resetting persistent view settings")
         else:
             logger.debug("Reading view settings for window: {:d}".format(self._instance_nr))
-            settings = QtCore.QSettings()
+            settings = get_qsettings()
             settings.beginGroup(self._settings_group_name('view'))
             pos = settings.value("main_window/pos", pos)
             window_size = settings.value("main_window/size", window_size)
             details_button_idx = int(settings.value("details_button_idx", details_button_idx))
-            self.central_splitter.restoreState(settings.value("central_splitter/state"))
+            splitter_state = settings.value("central_splitter/state")
+            if splitter_state:
+                self.central_splitter.restoreState(splitter_state) 
             header_restored = self.obj_tree.read_view_settings('table/header_state', 
                                                                settings, reset) 
             settings.endGroup()
@@ -366,7 +446,7 @@ class ObjectBrowser(FMainWindow):
         """         
         logger.debug("Writing view settings for window: {:d}".format(self._instance_nr))
         
-        settings = QtCore.QSettings()
+        settings = get_qsettings()
         settings.beginGroup(self._settings_group_name('view'))
         self.obj_tree.write_view_settings("table/header_state", settings)
         settings.setValue("central_splitter/state", self.central_splitter.saveState())
@@ -376,11 +456,11 @@ class ObjectBrowser(FMainWindow):
         settings.endGroup()
             
 
-    @QtCore.Slot(QtCore.QModelIndex, QtCore.QModelIndex)
+    @Slot(QtCore.QModelIndex, QtCore.QModelIndex)
     def _update_details(self, current_index, _previous_index):
         """ Shows the object details in the editor given an index.
         """
-        tree_item = self._tree_model.treeItem(current_index)
+        tree_item = self._proxy_tree_model.treeItem(current_index)
         self._update_details_for_item(tree_item)
 
         
@@ -389,7 +469,7 @@ class ObjectBrowser(FMainWindow):
         """
         #logger.debug("_change_details_field: {}".format(_button_id))
         current_index = self.obj_tree.selectionModel().currentIndex()
-        tree_item = self._tree_model.treeItem(current_index)
+        tree_item = self._proxy_tree_model.treeItem(current_index)
         self._update_details_for_item(tree_item)
         
             
@@ -406,58 +486,137 @@ class ObjectBrowser(FMainWindow):
             self.editor.setPlainText(data)
             self.editor.setWordWrapMode(attr_details.line_wrap)
             
-        except StandardError, ex:
+        except Exception as ex:
             self.editor.setStyleSheet("color: red;")
             stack_trace = traceback.format_exc()
             self.editor.setPlainText("{}\n\n{}".format(ex, stack_trace))
-            self.editor.setWordWrapMode(QtGui.QTextOption.WrapAtWordBoundaryOrAnywhere)
-            if DEBUGGING is True:
-                raise
+            self.editor.setWordWrapMode(QtWidgets.QTextOption.WrapAtWordBoundaryOrAnywhere)
 
-    
-    def toggle_callables(self, checked):
-        """ Shows/hides the special callable objects.
-            Callable objects are functions, methods, etc. They have a __call__ attribute. 
+    def toggle_auto_refresh(self, checked):
+        """ Toggles auto-refresh on/off.
         """
-        self.show_routine_attributes = checked
-        logger.debug("toggle_callables: {}".format(checked))
-        self._tree_model.setShowCallables(checked)
-        if self._tree_model.show_root_node:
-            self.obj_tree.expandToDepth(0)
+        if checked:
+            logger.info("Auto-refresh on. Rate {:g} seconds".format(self._refresh_rate))
+            self._refresh_timer.start()
+        else:
+            logger.info("Auto-refresh off")
+            self._refresh_timer.stop()
+        self._auto_refresh = checked        
 
-
-    def toggle_special_attributes(self, checked):
-        """ Shows/hides the special attributes.
-            Special attributes are objects that have names that start and end with two underscores.
-        """
-        self.show_special_attributes = checked
-        logger.debug("toggle_special_attributes: {}".format(checked))
-        self._tree_model.setShowSpecialAttributes(checked)
-        if self._tree_model.show_root_node:
-            self.obj_tree.expandToDepth(0)
 
     def my_test(self):
         """ Function for testing """
         logger.debug("my_test")
+        raise Exception("An exceptional exception occurred")
+
         
     def about(self):
         """ Shows the about message window. """
-        message = u"{} version {}\n\n{}""".format(PROGRAM_NAME, PROGRAM_VERSION, PROGRAM_URL)
-        QtGui.QMessageBox.about(self, "About {}".format(PROGRAM_NAME), message)
+        message = ("{}: {}\n\nPython: {}\n{} (api: {}, qtpy: {})\n\n{}"
+                   .format(PROGRAM_NAME, PROGRAM_VERSION, PYTHON_VERSION,
+                           QT_API_NAME, QT_API, QTPY_VERSION, PROGRAM_URL))
+        QtWidgets.QMessageBox.about(self, "About {}".format(PROGRAM_NAME), message)
 
-    def close_window(self):
-        """ Closes the window """
-        self.close()
+
+    def _finalize(self):
+        """ Cleans up resources when this window is closed.
+            Disconnects all signals for this window.
+        """
+        self._refresh_timer.stop()
+        self._refresh_timer.timeout.disconnect(self.refresh)
+        self.toggle_callable_action.toggled.disconnect(self._proxy_tree_model.setShowCallables)
+        self.toggle_special_attribute_action.toggled.disconnect(self._proxy_tree_model.setShowSpecialAttributes)        
+        self.toggle_auto_refresh_action.toggled.disconnect(self.toggle_auto_refresh)
+        self.refresh_action_f5.triggered.disconnect(self.refresh)
+        self.button_group.buttonClicked[int].disconnect(self._change_details_field)
+        selection_model = self.obj_tree.selectionModel() 
+        selection_model.currentChanged.disconnect(self._update_details)
         
+        
+    def closeEvent(self, event):
+        """ Called when the window is closed
+        """
+        logger.debug("closeEvent")
+        self._writeModelSettings()                
+        self._writeViewSettings()
+        self._finalize()                
+        self.close()
+        event.accept()
+        self._remove_instance()
+        logger.debug("Closed {} window {}".format(PROGRAM_NAME, self._instance_nr))
+
+
     def quit_application(self):
         """ Closes all windows """
-        self.close()
+        logger.debug("Closing all windows")
+        get_qapp().closeAllWindows()
 
-    # def closeEvent(self, event):
-    #     """ Close all windows (e.g. the L0 window).
-    #     """
-    #     logger.debug("closeEvent")
-    #     # self._writeModelSettings()                
-    #     # self._writeViewSettings()                
-    #     self.close()
-    #     event.accept()
+
+    @classmethod
+    def about_to_quit(cls):
+        """ Called when application is about to quit
+        """
+        # Sanity check
+        for idx, bw in enumerate(cls._browsers):
+            if bw is not None:
+                raise AssertionError("Reference not cleaned up: {}".format(idx))
+
+        logger.debug("Quitting {}".format(PROGRAM_NAME))
+        
+            
+    @classmethod
+    def create_browser(cls, *args, **kwargs):
+        """ Creates and shows and ObjectBrowser window.
+        
+            Creates the Qt Application object if it doesn't yet exist.
+            
+            The *args and **kwargs will be passed to the ObjectBrowser constructor.
+            
+            A (class attribute) reference to the browser window is kept to prevent it from being
+            garbage-collected.
+        """
+        q_app = QtWidgets.QApplication.instance()
+        if q_app is None:
+
+            logger.debug("Creating QApplication instance")
+            q_app = QtWidgets.QApplication(sys.argv)
+            q_app.aboutToQuit.connect(cls.about_to_quit)
+            q_app.lastWindowClosed.connect(q_app.quit)
+        else:
+            logger.debug("Reusing existing QApplication instance")
+            
+        cls._q_app = q_app # keeping reference to prevent garbage collection. 
+        
+        object_browser = cls(*args, **kwargs)
+        object_browser.show()
+        object_browser.raise_()
+        return object_browser
+
+    
+    @classmethod
+    def execute(cls):
+        """ Start the Qt event loop.
+        """
+        assert cls._q_app is not None, "QApplication object doesn't exist yet."
+        exit_code = start_qt_event_loop(cls._q_app)
+        return exit_code
+    
+    
+    @classmethod
+    def browse(cls, *args, **kwargs):
+        """ Create and run object browser.
+            For this, the following three steps are done:
+            1) Create QApplication object if it doesn't yet exist
+            2) Create and show an ObjectBrowser window
+            3) Start the Qt event loop.
+        
+            The *args and **kwargs will be passed to the ObjectBrowser constructor.
+        """
+        logger.info("Browsing with {} {}".format(PROGRAM_NAME, PROGRAM_VERSION))
+        logger.info("Using Python {}".format(PYTHON_VERSION))
+        logger.info("Using {} (api {}, qtpy: {})".format(QT_API_NAME, QT_API, QTPY_VERSION))
+
+        cls.create_browser(*args, **kwargs)
+        exit_code = cls.execute()
+        return exit_code
+        

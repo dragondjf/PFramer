@@ -1,8 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from qframer.qt.QtCore import *
-from qframer.qt.QtGui import *
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
 from qframer import views, collectView
 from qframer import FMainWindow
 from qframer import FSuspensionWidget
@@ -12,7 +13,7 @@ from gui.uiconfig import windowsoptions
 from gui.menus import SettingsMenu, SkinMenu
 from gui.floatwindows import LogWindow, HistoryWindow
 from gui.floatwindows import InitHistoryWindow, FloatWindow
-from gui.functionpages import FloatPage, ScrollWidget, TablePage, WebKitPage
+from gui.functionpages import FloatPage, ScrollWidget, TablePage, WebEnginePage
 from .guimanger import GuiManger
 
 
@@ -37,7 +38,7 @@ class MainWindow(FMainWindow):
         self.initMenus()
 
         self.initTitleBar()
-        self.setCentralWidget(WebKitPage(self))
+        self.setCentralWidget(WebEnginePage(self))
 
         self.initDockwindow()
 

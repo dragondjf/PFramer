@@ -13,4 +13,4 @@ from .ffloatwidget import FFloatWidget
 from .ftablewidget import FDragRowsTableWidget, FTableItemDetailWidget
 from .fglobalsearch import FGlobalSearchWidget
 from .fsplashscreen import FSplashScreen
-from .fwebkitbasepage import FWebkitBasePage
+from .fwebenginepage import FWebEnginePage

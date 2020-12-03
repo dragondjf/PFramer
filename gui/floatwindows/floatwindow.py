@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from qframer.qt.QtCore import *
-from qframer.qt.QtGui import *
-
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
 
 class FloatWindow(QDockWidget):
     def __init__(self, childwidget, name="", parent=None):

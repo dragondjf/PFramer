@@ -8,4 +8,4 @@ from .rpceditpage import RPCEditPage
 from .floatpage import FloatPage
 from .scrollwidget import ScrollWidget
 from .tablewidget import TablePage
-from .webkitpage import WebKitPage
+from .webenginepage import WebEnginePage

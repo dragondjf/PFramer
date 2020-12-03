@@ -1,8 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from .qt.QtCore import *
-from .qt.QtGui import *
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
 from .fmoveablewidget import FMoveableWidget
 
 
@@ -50,14 +51,14 @@ class FGlobalSearchWidget(FMoveableWidget):
         self.setStyleSheet(self.style)
 
     def _initShowAnimation(self):
-        self.showanimation = QPropertyAnimation(self, 'windowOpacity')
+        self.showanimation = QPropertyAnimation(self, b'windowOpacity')
         self.showanimation.setStartValue(0)
         self.showanimation.setEndValue(1)
         self.showanimation.setDuration(1000)
         self.showanimation.setEasingCurve(QEasingCurve.OutCubic)
 
     def _initHideAnimation(self):
-        self.hideanimation = QPropertyAnimation(self, 'windowOpacity')
+        self.hideanimation = QPropertyAnimation(self, b'windowOpacity')
         self.hideanimation.setStartValue(1)
         self.hideanimation.setEndValue(0)
         self.hideanimation.setDuration(1000)

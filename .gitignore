@@ -11,4 +11,4 @@ dist
 */.DS_Store
 tags
 *.json
-
+__pycache__

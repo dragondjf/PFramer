@@ -12,10 +12,10 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(os.path.pardir)))
 
-from qframer.qt.QtCore import QUrl
-from qframer.qt.QtGui import QApplication
-from qframer.qt.QtDeclarative import QDeclarativeView
-from qframer.qt.QtWebKit import QWebPluginFactory, QWebView, QWebSettings
+from PySide2.QtCore import QUrl
+from PySide2.QtGui import QApplication
+from PySide2.QtDeclarative import QDeclarativeView
+from PySide2.QtWebKit import QWebPluginFactory, QWebView, QWebSettings
 
 class PluginFactory(QWebPluginFactory):
 

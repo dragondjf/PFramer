@@ -3,7 +3,7 @@
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-# from PyQt5.QtWidgets import *
+# from PySide2.QtWidgets import *
 
 
 class MainWindow(QFrame):

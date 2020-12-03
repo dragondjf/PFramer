@@ -4,11 +4,11 @@
 import os
 import sys
 sys.path.append(os.path.pardir)
-from qframer.qt.QtCore import *
-from qframer.qt.QtGui import *
-from qframer.qt import QtCore
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2 import QtCore
 
-print('using %s(%s)' % (os.environ['QT_API'], QtCore.__version__))
+print('using %s(%s)' % (os.environ['QT_API'], *__version__))
 
 class MainWindow(QMainWindow):
 

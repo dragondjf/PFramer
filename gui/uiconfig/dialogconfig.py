@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import os
-from qframer.qt.QtCore import *
-from qframer.qt.QtGui import *
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
 
 from . import logo_ico, logo_title, logo_img_url
 
